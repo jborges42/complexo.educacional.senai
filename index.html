@@ -4,324 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Planta dos Ambientes · SENAI</title>
-<meta name="description" content="Planta interativa dos ambientes e quadro de aulas: 1º andar, 2º andar (Maker) e carretas.">
+<meta name="description" content="Planta interativa dos ambientes com calendário de enturmação, recados e modo telão: 1º andar, 2º andar (Maker) e carretas.">
 <link rel="icon" href="assets/logo-senai.png">
-<style>
-@font-face{font-family:"Marca";font-weight:400;font-display:swap;src:local("Century Gothic"),local("CenturyGothic"),url("assets/fonts/texgyreadventor-regular.otf") format("opentype")}
-@font-face{font-family:"Marca";font-weight:700;font-display:swap;src:local("Century Gothic Bold"),local("CenturyGothic-Bold"),url("assets/fonts/texgyreadventor-bold.otf") format("opentype")}
-
-/* Paleta oficial SENAI 2026 (modelo de apresentação) + apoio */
-:root{
-  --azul:#164193; --azul-esc:#0D2A66; --azul-claro:#008AD1; --laranja:#E8490F; --laranja-txt:#C2410C; --verde:#52AE32; --verde-txt:#2E7417;
-  --tinta:#0F1E3D; --texto:#26365A; --suave:#5B6885; --linha:#DFE5F0; --linha-forte:#C9D3E5;
-  --fundo:#F3F6FB; --cartao:#FFFFFF; --parede:#1A2C55; --aviso:#FFF5F0;
-  --raio:16px; --sombra:0 1px 2px rgb(16 32 72 / .06),0 10px 28px -14px rgb(16 32 72 / .22);
-  --fonte:"Marca","Century Gothic","URW Gothic","Avant Garde",system-ui,sans-serif;
-  --barra:14px; --ease:cubic-bezier(.2,.7,.2,1);
-  color-scheme:light;
-}
-*{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%}
-body{margin:0;min-height:100vh;background:var(--fundo);color:var(--texto);font:400 16px/1.5 var(--fonte)}
-button,input,select,textarea{font:inherit;color:inherit}
-:focus-visible{outline:3px solid var(--laranja);outline-offset:2px}
-[hidden]{display:none!important}
-.ic{width:20px;height:20px;flex:none}
-
-/* Barra da marca */
-.barra{position:fixed;inset:0 auto 0 0;width:var(--barra);z-index:5;pointer-events:none}
-.barra i,.barra b{position:absolute;left:0;right:0}
-.barra i{top:0;height:78px;background:var(--laranja);border-top-right-radius:8px;clip-path:polygon(0 0,100% 0,100% 62px,0 78px)}
-.barra b{top:86px;bottom:0;background:var(--azul);clip-path:polygon(0 16px,100% 0,100% 100%,0 100%)}
-
-/* Cabeçalho */
-.topo{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:20px 32px;padding:28px max(32px,env(safe-area-inset-right)) 22px max(calc(var(--barra) + 32px),env(safe-area-inset-left))}
-.marca{display:flex;align-items:center;gap:20px;min-width:0}
-.marca img{height:32px;width:auto;display:block}
-.marca .sep{width:1px;height:56px;background:var(--linha-forte)}
-.olho{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 4px;font-size:.75rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--laranja-txt)}
-.olho a{letter-spacing:.04em;text-transform:none;color:var(--azul);font-weight:700}
-.tag-ed{padding:2px 8px;border-radius:6px;background:var(--laranja);color:#fff;letter-spacing:.1em}
-h1{margin:0;font-weight:400;font-size:clamp(1.6rem,1.05rem + 1.8vw,2.35rem);line-height:1.08;letter-spacing:-.01em;color:var(--azul);text-wrap:balance}
-h1 .ponto{color:var(--verde)}
-.sub{margin:6px 0 0;font-size:.92rem;color:var(--suave)}
-
-.abas{display:flex;gap:6px;padding:6px;max-width:100%;overflow-x:auto;background:var(--cartao);border:1px solid var(--linha);border-radius:14px;box-shadow:var(--sombra)}
-.aba{display:flex;align-items:center;gap:10px;min-height:52px;padding:8px 18px 8px 12px;border:0;border-radius:10px;background:transparent;cursor:pointer;white-space:nowrap;transition:background-color .18s,color .18s}
-.aba .ic{width:24px;height:24px;color:var(--azul)}
-.aba span{display:grid;text-align:left;line-height:1.2}
-.aba strong{font-size:.98rem}
-.aba small{font-size:.76rem;color:var(--suave)}
-.aba:hover{background:#EEF2FA}
-.aba[aria-selected="true"]{background:var(--azul);color:#fff}
-.aba[aria-selected="true"] .ic{color:#fff}
-.aba[aria-selected="true"] small{color:#CBD7F2}
-
-/* Grade principal */
-.painel{display:grid;grid-template-columns:minmax(0,1fr) 370px;grid-template-areas:"planta lateral" "quadro lateral";grid-template-rows:auto 1fr;gap:20px;align-items:start;padding:0 max(32px,env(safe-area-inset-right)) 28px max(calc(var(--barra) + 32px),env(safe-area-inset-left))}
-.planta{grid-area:planta}.lateral{grid-area:lateral}.quadro{grid-area:quadro}.telao-lado{grid-area:lado}
-.cartao{background:var(--cartao);border:1px solid var(--linha);border-radius:var(--raio);box-shadow:var(--sombra);min-width:0}
-.planta{overflow:hidden}
-.planta-cab{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 16px;padding:16px 18px;border-bottom:1px solid var(--linha)}
-.planta-cab h2{margin:0;font-size:1.2rem;font-weight:700;color:var(--tinta)}
-.planta-cab p{margin:2px 0 0;font-size:.82rem;color:var(--suave)}
-.ferramentas{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
-.seg{display:inline-flex;padding:3px;border:1px solid var(--linha);border-radius:11px;background:#EEF2F8}
-.seg button{min-height:38px;padding:0 11px;border:0;border-radius:8px;background:transparent;font-size:.86rem;cursor:pointer;transition:background-color .18s,color .18s}
-.seg button:hover{color:var(--azul)}
-.seg button[aria-pressed="true"]{background:#fff;color:var(--azul);font-weight:700;box-shadow:0 1px 3px rgb(16 32 72 / .16)}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-width:40px;min-height:40px;padding:0 11px;border:1px solid var(--linha);border-radius:10px;background:#fff;font-size:.86rem;cursor:pointer;text-decoration:none;color:var(--texto);transition:border-color .18s,background-color .18s,color .18s}
-.btn:hover{border-color:var(--azul);color:var(--azul)}
-.btn[aria-pressed="true"]{background:var(--azul);border-color:var(--azul);color:#fff}
-.btn:disabled{opacity:.4;cursor:not-allowed}
-.btn .ic{width:18px;height:18px}
-.btn-pri{background:var(--laranja);border-color:var(--laranja);color:#fff;font-weight:700}
-.btn-pri:hover{background:#C93C0A;border-color:#C93C0A;color:#fff}
-.btn-perigo:hover{border-color:#B42318;color:#B42318}
-.grupo{display:inline-flex;gap:4px}
-
-.vista{position:relative;overflow:auto;max-height:78vh;padding:12px;background-color:#F7F9FD;
-  background-image:linear-gradient(rgb(22 65 147 / .06) 1px,transparent 1px),linear-gradient(90deg,rgb(22 65 147 / .06) 1px,transparent 1px);background-size:24px 24px}
-.palco{position:relative;width:calc(max(min(100%,(78vh - 24px) * var(--ar,1.4)),700px) * var(--zoom,1));margin:0 auto;perspective:2200px}
-.cena{position:absolute;inset:0;transform-style:preserve-3d;transform-origin:50% 55%;transition:transform .75s var(--ease)}
-.cena>svg,.camadas,.camadas>svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
-.camadas{transform-style:preserve-3d;pointer-events:none}
-.camadas>svg{transform:translateZ(calc(var(--i) * 2.3px))}
-.vista.is-3d .cena{transform:rotateX(55deg) rotateZ(-28deg) scale(.8)}
-.camadas .par-ext,.camadas .par-int{stroke:color-mix(in srgb,var(--parede),#fff calc(var(--i) * 4%))}
-
-/* Desenho da planta */
-.cat-ensino{--c:#164193;--c-fill:#E6ECF7;--c-hover:#D2DDF1;--c-txt:#164193}
-.cat-lab{--c:#008AD1;--c-fill:#E0F1FB;--c-hover:#C9E6F7;--c-txt:#00699F}
-.cat-admin{--c:#F08A00;--c-fill:#FFF0DA;--c-hover:#FFE2B8;--c-txt:#9A5300}
-.cat-conv{--c:#52AE32;--c-fill:#E8F5E3;--c-hover:#D4EDCB;--c-txt:#2E7417}
-.cat-serv{--c:#009E96;--c-fill:#DCF3F1;--c-hover:#C2EAE6;--c-txt:#006C66}
-.cat-circ{--c:#7A869E;--c-fill:#EEF1F6;--c-hover:#E0E5EE;--c-txt:#4F5B75}
-.t-piso{--c-fill:#F4F6FA;--c-hover:#E9EDF4}
-.patio{fill:#EDF1F7;stroke:#D5DCE8;stroke-width:1.5;stroke-dasharray:10 8}
-.amb{cursor:pointer;outline:none}
-.amb .forma{fill:var(--c-fill);transition:fill .18s}
-.amb.t-zona .forma{stroke:var(--c);stroke-width:1.6;stroke-dasharray:7 5}
-.amb .realce{fill:none;stroke:transparent;stroke-width:3.5;transition:stroke .18s}
-.amb:hover .forma,.amb.sel .forma,.amb:focus-visible .forma{fill:var(--c-hover)}
-.amb.hl .realce{stroke:var(--laranja);stroke-dasharray:9 6}
-.amb.sel .realce,.amb:focus-visible .realce{stroke:var(--laranja);stroke-dasharray:none}
-.amb,.r{transition:opacity .28s;animation:surge .5s var(--ease) backwards;animation-delay:calc(var(--k) * 24ms)}
-.dim{opacity:.25}
-@keyframes surge{from{opacity:0}}
-.par-ext{fill:none;stroke:var(--parede);stroke-width:7;stroke-linecap:square}
-.par-int{fill:none;stroke:var(--parede);stroke-width:4;stroke-linecap:square}
-.par-ext,.par-int,.folha,.arco,.patio{pointer-events:none}
-.folha{fill:none;stroke:var(--parede);stroke-width:2}
-.arco{fill:none;stroke:var(--parede);stroke-width:1.1;stroke-dasharray:3 3}
-.m{fill:#fff;stroke:#8592AD;stroke-width:1.4}
-.m-l{fill:none;stroke:#A7B1C6;stroke-width:1.2}
-.m-seta{fill:none;stroke:#8592AD;stroke-width:1.4}
-.roda{fill:#3B4A6B}
-.desenhos{pointer-events:none}
-.txt-m{font-size:10px;fill:#7C88A3;text-anchor:middle}
-.txt-piso{font-size:10.5px;font-weight:700;letter-spacing:.16em;fill:#9AA5BC;text-anchor:middle;pointer-events:none}
-.txt-nota{font-size:13px;fill:#8591AA;text-anchor:middle;font-style:italic;pointer-events:none}
-.rot{font-weight:700;font-size:15px;fill:var(--tinta);text-anchor:middle;dominant-baseline:central;paint-order:stroke;stroke:var(--c-fill);stroke-width:4px;stroke-linejoin:round;pointer-events:none}
-.rot .rot-sub{font-weight:400;font-size:11.5px;fill:var(--c-txt)}
-.t-piso .rot{font-weight:700;letter-spacing:.16em;fill:#9AA5BC;stroke:none}
-.selo{pointer-events:none}
-.selo rect{fill:var(--azul)}
-.selo text{font-size:11px;font-weight:700;fill:#fff;text-anchor:middle;dominant-baseline:central;letter-spacing:.02em}
-.selo.livre rect{fill:#fff;stroke:#3E8A24;stroke-width:1.4}
-.selo.livre text{fill:var(--verde-txt)}
-.r.hl .selo rect,.r.agora .selo rect{fill:var(--laranja)}
-.acesso{pointer-events:none}
-.acesso path{fill:none;stroke:var(--laranja);stroke-width:2.5}
-.acesso text{font-size:12.5px;font-weight:700;letter-spacing:.14em;fill:var(--laranja-txt)}
-
-/* Edição na planta */
-.modo-editar #base{touch-action:none}
-.modo-editar .amb{cursor:move}
-.modo-editar .acesso,.modo-editar [data-t]{pointer-events:auto;cursor:move}
-.modo-editar .acesso.on text,.modo-editar [data-t].on{fill:var(--laranja);text-decoration:underline}
-.ferr-parede #base,.ferr-porta #base{cursor:crosshair}
-.hit-parede{stroke:transparent;stroke-width:14;cursor:pointer;pointer-events:stroke}
-.hit-parede.on{stroke:rgb(232 73 15 / .6);stroke-width:9}
-.hit-porta{fill:transparent;cursor:grab}
-.hit-porta.on{fill:rgb(232 73 15 / .16);stroke:var(--laranja);stroke-width:1.5}
-.alca{fill:#fff;stroke:var(--laranja);stroke-width:2.5;cursor:nwse-resize}
-.alca[data-alca="rot"]{cursor:move}
-.prev-parede{stroke:var(--laranja);stroke-width:5;stroke-dasharray:6 4}
-.barra-ed{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;padding:10px 18px;border-bottom:1px solid var(--linha);background:#FFF8F4}
-.barra-ed .div{width:1px;height:28px;background:var(--linha-forte)}
-.ed-dica{margin:0 0 0 auto;font-size:.8rem;color:var(--suave);font-variant-numeric:tabular-nums}
-.faixa{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;width:100%;margin:0;padding:10px 12px;border-radius:10px;background:#FFE9DE;font-size:.86rem;color:#5A2A12}
-
-/* Coluna lateral */
-.lateral{display:grid;gap:16px;align-content:start;min-width:0}
-.bloco{padding:18px}
-.bloco>h3,.quadro h3{display:flex;align-items:center;gap:9px;margin:0 0 14px;font-size:.74rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--suave)}
-.bloco>h3::before,.quadro h3::before{content:"";width:11px;height:13px;background:var(--laranja);clip-path:polygon(0 0,100% 0,100% 62%,0 100%)}
-.det-nome{margin:0;font-size:1.45rem;font-weight:400;line-height:1.15;color:var(--azul)}
-.chips{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 14px}
-.chip{display:inline-flex;align-items:center;gap:7px;padding:3px 10px;border-radius:999px;background:#EEF2F8;font-size:.78rem}
-.chip i{width:9px;height:9px;border-radius:3px;background:var(--c,#7A869E)}
-.det dl{display:grid;grid-template-columns:104px 1fr;gap:9px 12px;margin:0;font-size:.88rem}
-.det dt{color:var(--suave)}
-.det dd{margin:0;color:var(--tinta);min-width:0}
-.turnos{display:grid;gap:4px}
-.turnos b{display:inline-block;min-width:54px;font-weight:700;color:var(--azul)}
-.postit{display:inline-flex;gap:8px;align-items:flex-start}
-.postit i{flex:none;width:14px;height:14px;margin-top:3px;border-radius:2px;background:var(--p);box-shadow:0 1px 2px rgb(0 0 0 / .2)}
-.obs{margin:14px 0 0;padding:10px 12px;border-left:3px solid var(--laranja);border-radius:0 8px 8px 0;background:var(--aviso);font-size:.84rem;color:#5A2A12}
-.vazio{display:flex;gap:12px;align-items:flex-start;margin:0;font-size:.9rem;color:var(--suave)}
-.vazio .ic{width:28px;height:28px;color:var(--azul)}
-.resumo-local{margin:12px 0 0;font-size:.84rem;color:var(--suave)}
-.turmas{display:flex;flex-wrap:wrap;gap:6px}
-.turma{min-height:36px;padding:0 12px;border:1px solid var(--linha-forte);border-radius:999px;background:#fff;font-size:.84rem;font-weight:700;color:var(--azul);cursor:pointer;transition:background-color .18s,border-color .18s,color .18s}
-.turma:hover{border-color:var(--azul)}
-.turma[aria-pressed="true"]{background:var(--laranja);border-color:var(--laranja);color:#fff}
-.onde{margin:12px 0 0;padding:0;list-style:none;display:grid;gap:6px;font-size:.86rem}
-.onde:empty{display:none}
-.onde button,.ir{border:0;padding:0;background:none;color:var(--azul);font-weight:700;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
-.nota-dia{margin:12px 0 0;font-size:.84rem;color:var(--suave)}
-.tab-ocup{width:100%;margin-top:14px;border-collapse:collapse;font-size:.84rem}
-.tab-ocup th,.tab-ocup td{padding:7px 6px;border-bottom:1px solid var(--linha);text-align:left;vertical-align:top}
-.tab-ocup thead th{font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--suave);font-weight:700}
-.tab-ocup tbody th{font-weight:400}
-.tab-ocup tbody th button{display:grid;padding:0;border:0;background:none;text-align:left;cursor:pointer}
-.tab-ocup tbody th strong{color:var(--tinta)}
-.tab-ocup tbody th small{font-size:.74rem;color:var(--suave)}
-.tab-ocup tbody th button:hover strong{color:var(--azul);text-decoration:underline;text-underline-offset:3px}
-.tab-ocup td{font-weight:700;color:var(--azul)}
-.tab-ocup td.livre{font-weight:400;color:var(--verde-txt)}
-.tab-ocup .sem-turno{display:block;font-weight:400;font-size:.76rem;color:var(--suave)}
-.tab-ocup tr.sel{background:var(--aviso)}
-.tab-ocup mark{padding:0 3px;border-radius:4px;background:var(--laranja);color:#fff}
-.leg{display:grid;gap:12px;margin:0;padding:0;list-style:none}
-.leg-cab{display:flex;align-items:center;gap:9px;font-size:.88rem;font-weight:700;color:var(--tinta)}
-.leg-cab i{width:16px;height:16px;border-radius:5px;background:var(--c-fill);border:2px solid var(--c)}
-.leg-cab small{margin-left:auto;font-weight:400;color:var(--suave)}
-.leg-itens{display:flex;flex-wrap:wrap;gap:5px;margin:7px 0 0 25px}
-.leg-itens button{min-height:30px;padding:0 9px;border:1px solid var(--linha);border-radius:8px;background:#fff;font-size:.8rem;cursor:pointer;transition:border-color .18s,color .18s}
-.leg-itens button:hover{border-color:var(--c);color:var(--c-txt)}
-.leg-itens button[aria-pressed="true"]{border-color:var(--laranja);color:var(--laranja-txt);font-weight:700}
-
-/* Formulários do editor */
-.form{display:grid;gap:12px}
-.form h4{margin:6px 0 0;font-size:.82rem;color:var(--azul)}
-.form hr{width:100%;margin:4px 0;border:0;border-top:1px solid var(--linha)}
-.campo{display:grid;gap:4px;min-width:0}
-.campo>label,.rotulo{font-size:.74rem;font-weight:700;letter-spacing:.03em;color:var(--suave)}
-.campo small{font-weight:400}
-.form input:not([type=checkbox]),.form select,.form textarea,.quadro input,.quadro select{width:100%;min-height:38px;padding:7px 10px;border:1px solid var(--linha-forte);border-radius:8px;background:#fff;color:var(--tinta);font-size:.9rem}
-.form textarea{resize:vertical;min-height:60px}
-.form input:focus,.form select:focus,.form textarea:focus,.quadro input:focus{border-color:var(--azul);outline:2px solid rgb(22 65 147 / .2);outline-offset:0}
-.lin2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.lin4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.check{display:flex;align-items:center;gap:8px;font-size:.88rem;cursor:pointer}
-.check input{width:18px;height:18px;accent-color:var(--azul)}
-.botoes{display:flex;flex-wrap:wrap;gap:6px}
-.ajuda{margin:0;font-size:.8rem;color:var(--suave)}
-.ajuda a{color:var(--azul);font-weight:700}
-.ajuda ul{margin:6px 0 0;padding-left:18px}
-.msg{margin:10px 0 0;font-size:.86rem;color:var(--tinta)}
-.msg:empty{display:none}
-.msg.erro{color:#B42318}
-.estado-pub{display:flex;align-items:center;gap:8px;margin:0 0 12px;font-size:.9rem;font-weight:700}
-.estado-pub i{width:10px;height:10px;border-radius:50%;background:var(--verde)}
-.estado-pub.sujo i{background:var(--laranja)}
-
-/* Quadro de aulas (editor) */
-.quadro{padding:18px}
-.quadro-cab{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 16px;margin-bottom:12px}
-.quadro-cab h3{margin:0}
-.rolagem{overflow-x:auto}
-.tab-quadro{width:100%;min-width:760px;border-collapse:collapse;font-size:.88rem}
-.tab-quadro th,.tab-quadro td{padding:6px;border-bottom:1px solid var(--linha);text-align:left;vertical-align:middle}
-.tab-quadro thead th{font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--suave)}
-.tab-quadro tbody th{font-weight:400;min-width:180px}
-.tab-quadro tbody th button{display:grid;padding:0;border:0;background:none;text-align:left;cursor:pointer}
-.tab-quadro tbody th strong{color:var(--tinta)}
-.tab-quadro tbody th small{font-size:.74rem;color:var(--suave)}
-.tab-quadro input{min-height:36px}
-.tab-quadro tfoot td{padding-top:12px}
-.add-quadro{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.add-quadro select{max-width:340px}
-
-.rodape{padding:0 max(32px,env(safe-area-inset-right)) 32px max(calc(var(--barra) + 32px),env(safe-area-inset-left));font-size:.8rem;color:var(--suave)}
-.rodape .ponto{color:var(--verde);font-weight:700}
-
-/* ======= Telão / projetor ======= */
-.modo-telao{display:grid;grid-template-rows:auto minmax(0,1fr) auto;height:100vh;height:100dvh;overflow:hidden;background:var(--azul-esc);color:#fff}
-.modo-telao.ocioso{cursor:none}
-.telao-topo{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:22px max(28px,env(safe-area-inset-right)) 18px max(calc(var(--barra) + 28px),env(safe-area-inset-left))}
-.telao-topo img{height:clamp(30px,2.6vw,48px);width:auto}
-.tt-titulo{display:flex;align-items:center;gap:24px;min-width:0}
-.tt-titulo .sep{width:1px;height:clamp(40px,4vw,64px);background:rgb(255 255 255 / .3)}
-.tt-titulo p{margin:0;font-size:clamp(.8rem,.9vw,1.1rem);letter-spacing:.16em;text-transform:uppercase;color:#FFB59A;font-weight:700}
-.tt-titulo h1{color:#fff;font-size:clamp(1.8rem,3vw,3.6rem)}
-.tt-hora{text-align:right;font-variant-numeric:tabular-nums}
-.tt-hora strong{display:block;font-size:clamp(2rem,3.6vw,4.4rem);font-weight:400;line-height:1}
-.tt-hora span{display:block;margin-top:6px;font-size:clamp(.9rem,1.1vw,1.4rem);color:#C9D6F2}
-.tt-hora .tt-agora{display:inline-block;margin-top:8px;padding:4px 14px;border-radius:999px;background:var(--laranja);color:#fff;font-size:clamp(.85rem,1vw,1.3rem);font-weight:700}
-.modo-telao .painel{grid-template-columns:minmax(0,1fr) clamp(300px,27vw,560px);grid-template-areas:"planta lado";grid-template-rows:minmax(0,1fr);align-items:stretch;gap:20px;min-height:0;padding-bottom:0}
-.modo-telao .planta{display:grid;grid-template-rows:minmax(0,1fr);height:100%}
-.modo-telao .vista{max-height:none;height:100%;overflow:hidden;padding:18px}
-.modo-telao .palco{width:100%;height:100%;margin:0}
-.modo-telao .rot{stroke-width:5px}
-.modo-telao .selo text{font-size:14px}
-.telao-lado{display:flex;flex-direction:column;gap:14px;min-height:0;overflow:auto;padding:4px 4px 8px}
-.telao-lado h2{margin:0;font-size:clamp(1.1rem,1.5vw,2rem);font-weight:400;color:#fff}
-.telao-lado h2 b{color:#FFB59A;font-weight:700}
-.tl-grupo{padding:14px 16px;border-radius:14px;background:rgb(255 255 255 / .07);border:1px solid rgb(255 255 255 / .1)}
-.tl-grupo.atual{background:rgb(255 255 255 / .14);border-color:var(--laranja)}
-.tl-grupo h3{margin:0 0 8px;font-size:clamp(.75rem,.85vw,1.05rem);letter-spacing:.16em;text-transform:uppercase;color:#C9D6F2}
-.tl-grupo ul{margin:0;padding:0;list-style:none;display:grid;gap:8px}
-.tl-grupo li{display:flex;align-items:baseline;justify-content:space-between;gap:12px;font-size:clamp(1rem,1.35vw,1.8rem)}
-.tl-grupo li b{flex:none;padding:2px 12px;border-radius:999px;background:var(--laranja);font-size:.92em}
-.tl-vazio{margin:0;font-size:clamp(1rem,1.2vw,1.5rem);color:#C9D6F2}
-.telao-rodape{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 24px;padding:14px max(28px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)) max(calc(var(--barra) + 28px),env(safe-area-inset-left));font-size:clamp(.8rem,.9vw,1.1rem)}
-.tr-locais{display:flex;gap:8px;flex-wrap:wrap}
-.tr-locais button{position:relative;overflow:hidden;min-height:40px;padding:0 16px;border:1px solid rgb(255 255 255 / .25);border-radius:10px;background:transparent;color:#fff;font-size:inherit;cursor:pointer}
-.tr-locais button[aria-current="true"]{background:#fff;color:var(--azul);font-weight:700}
-.tr-locais button[aria-current="true"]::after{content:"";position:absolute;left:0;bottom:0;height:3px;width:100%;background:var(--laranja);transform-origin:left;animation:progresso var(--giro,20s) linear}
-.modo-telao.parado .tr-locais button::after{animation:none}
-@keyframes progresso{from{transform:scaleX(0)}}
-.tr-leg{display:flex;flex-wrap:wrap;gap:6px 16px;color:#C9D6F2}
-.tr-leg span{display:inline-flex;align-items:center;gap:7px}
-.tr-leg i{width:13px;height:13px;border-radius:4px;background:var(--c-fill);border:2px solid var(--c)}
-.telao-ctrl{position:fixed;right:max(18px,env(safe-area-inset-right));bottom:max(76px,calc(env(safe-area-inset-bottom) + 76px));z-index:20;display:flex;flex-wrap:wrap;gap:6px;align-items:center;max-width:calc(100vw - 36px);padding:8px;border-radius:14px;background:rgb(8 22 56 / .9);box-shadow:0 12px 30px rgb(0 0 0 / .35);transition:opacity .3s}
-.ocioso .telao-ctrl{opacity:0;pointer-events:none}
-.telao-ctrl .btn,.telao-ctrl select{min-height:40px;border-color:rgb(255 255 255 / .2);background:rgb(255 255 255 / .08);color:#fff}
-.telao-ctrl select{padding:0 8px;border-radius:10px;border:1px solid rgb(255 255 255 / .2)}
-.telao-ctrl option{color:var(--tinta)}
-.telao-ctrl .btn[aria-pressed="true"]{background:#fff;color:var(--azul)}
-
-/* Croqui original */
-dialog{width:min(1100px,94vw);max-height:92vh;padding:0;border:0;border-radius:var(--raio);box-shadow:0 30px 80px -20px rgb(8 20 50 / .5);color:var(--texto)}
-dialog::backdrop{background:rgb(9 22 52 / .55)}
-.dlg-cab{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;border-bottom:1px solid var(--linha)}
-.dlg-cab h2{margin:0;font-size:1.05rem;color:var(--azul)}
-dialog img{display:block;width:100%;height:auto;max-height:72vh;object-fit:contain;background:#222}
-dialog p{margin:0;padding:12px 18px;font-size:.84rem;color:var(--suave)}
-
-@media (max-width:1180px){
-  .painel{grid-template-columns:minmax(0,1fr);grid-template-areas:"planta" "quadro" "lateral";grid-template-rows:auto}
-  .lateral{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
-  .modo-telao .painel{grid-template-columns:minmax(0,1fr) clamp(260px,30vw,420px)}
-}
-@media (max-width:640px){
-  :root{--barra:7px}
-  .topo{padding:20px 16px 16px calc(var(--barra) + 16px)}
-  .painel{padding:0 16px 24px calc(var(--barra) + 16px)}
-  .rodape{padding:0 16px 24px calc(var(--barra) + 16px)}
-  .marca .sep{display:none}.marca{flex-wrap:wrap;gap:10px}
-  .abas{width:100%}.aba{flex:1;flex-direction:column;gap:3px;padding:8px 4px}.aba span{text-align:center}.aba strong{font-size:.86rem}.aba small{display:none}
-  .det dl{grid-template-columns:88px 1fr}
-  .lin4{grid-template-columns:1fr 1fr}
-  .modo-telao{height:auto;overflow:auto}
-  .modo-telao .painel{grid-template-columns:1fr}
-  .modo-telao .planta{height:60vh}
-}
-@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
-</style>
+<link rel="stylesheet" href="estilo.css">
+<link rel="stylesheet" href="estilo2.css">
 </head>
 <body class="modo-ver">
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -329,10 +15,12 @@ dialog p{margin:0;padding:12px 18px;font-size:.84rem;color:var(--suave)}
     <symbol id="i-predio" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4M10 10h4M10 14h4M10 18h4"/></symbol>
     <symbol id="i-camadas" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/></symbol>
     <symbol id="i-carreta" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.62l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></symbol>
+    <symbol id="i-espelho" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h3M16 3h3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-3M12 2v2M12 8v2M12 14v2M12 20v2"/></symbol>
     <symbol id="i-3d" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></symbol>
     <symbol id="i-mais" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3M11 8v6M8 11h6"/></symbol>
     <symbol id="i-menos" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3M8 11h6"/></symbol>
-    <symbol id="i-ajustar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></symbol>
+    <symbol id="i-original" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><rect width="10" height="8" x="7" y="8" rx="1"/></symbol>
+    <symbol id="i-girar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></symbol>
     <symbol id="i-foto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.09-3.09a2 2 0 0 0-2.82 0L6 21"/></symbol>
     <symbol id="i-fechar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></symbol>
     <symbol id="i-toque" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4.1 12 6M5.1 8l-2.9-.8M6 12l-1.9 2M7.2 2.2 8 5.1"/><path d="M9.04 9.69a.5.5 0 0 1 .65-.65l11 4.5a.5.5 0 0 1-.07.95l-4.35 1.04a1 1 0 0 0-.74.74l-1.04 4.35a.5.5 0 0 1-.95.07z"/></symbol>
@@ -342,11 +30,22 @@ dialog p{margin:0;padding:12px 18px;font-size:.84rem;color:var(--suave)}
     <symbol id="i-prox" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></symbol>
     <symbol id="i-pausa" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="14" y="4" width="4" height="16" rx="1"/><rect x="6" y="4" width="4" height="16" rx="1"/></symbol>
     <symbol id="i-sair" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></symbol>
-    <symbol id="i-mouse" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.59 21.04a.5.5 0 0 1-.94-.04L5.03 3.66a.5.5 0 0 1 .63-.63L23 9.65a.5.5 0 0 1 .04.94l-6.52 2.37a2 2 0 0 0-1.21 1.21z" transform="translate(-2 0)"/></symbol>
-    <symbol id="i-parede" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V4h16"/></symbol>
-    <symbol id="i-porta" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h4V5M7 5a14 14 0 0 1 14 14"/><path d="M21 21h-6" stroke-dasharray="2 2"/></symbol>
     <symbol id="i-desfazer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></symbol>
     <symbol id="i-refazer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></symbol>
+    <symbol id="i-cal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></symbol>
+    <symbol id="i-recado" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></symbol>
+    <symbol id="i-cursor" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.04 4.69a.5.5 0 0 1 .65-.65l16 6.5a.5.5 0 0 1-.06.95l-6.13 1.58a2 2 0 0 0-1.43 1.43l-1.58 6.13a.5.5 0 0 1-.95.06z"/></symbol>
+    <symbol id="i-mao" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 11V6a2 2 0 0 0-4 0v5"/><path d="M14 10V4a2 2 0 0 0-4 0v6"/><path d="M10 10.5V6a2 2 0 0 0-4 0v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-6-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></symbol>
+    <symbol id="i-sala" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3H3v18h18V3h-5"/></symbol>
+    <symbol id="i-zona" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="4" stroke-dasharray="4 3.2"/></symbol>
+    <symbol id="i-circ" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16v-2.38C4 11.5 2.97 10.5 3 8c.03-2.72 1.49-6 4.5-6C9.37 2 10 3.8 10 5.5c0 3.11-2 5.66-2 8.68V16a2 2 0 1 1-4 0Z"/><path d="M20 20v-2.38c0-2.12 1.03-3.12 1-5.62-.03-2.72-1.49-6-4.5-6C14.63 6 14 7.8 14 9.5c0 3.11 2 5.66 2 8.68V20a2 2 0 1 0 4 0Z"/><path d="M16 17h4M4 13h4"/></symbol>
+    <symbol id="i-parede" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V4h16"/></symbol>
+    <symbol id="i-porta" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h4V5M7 5a14 14 0 0 1 14 14"/><path d="M21 21h-6" stroke-dasharray="2 2"/></symbol>
+    <symbol id="i-texto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></symbol>
+    <symbol id="i-acesso" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="m10 17 5-5-5-5M15 12H3"/></symbol>
+    <symbol id="i-teclado" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 12h.01M12 12h.01M16 12h.01M7 16h10"/></symbol>
+    <symbol id="i-expandir" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 15 6 6M15 9l6-6M21 16v5h-5M21 8V3h-5M3 16v5h5M3 21l6-6M3 8V3h5M9 9 3 3"/></symbol>
+    <symbol id="i-recolher" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 15 6 6m-6-6v4.8m0-4.8h4.8M9 19.8V15m0 0H4.2M9 15l-6 6M15 4.2V9m0 0h4.8M15 9l6-6M9 4.2V9m0 0H4.2M9 9 3 3"/></symbol>
   </defs>
 </svg>
 
@@ -362,7 +61,7 @@ dialog p{margin:0;padding:12px 18px;font-size:.84rem;color:var(--suave)}
       <p class="sub" id="sub-geral"></p>
     </div>
   </div>
-  <div class="abas" role="tablist" aria-label="Ambientes" id="abas"></div>
+  <div class="abas" role="tablist" aria-label="Áreas" id="abas" data-modo="ver editar" data-secao="planta telao"></div>
 </header>
 
 <header class="telao-topo" data-modo="telao" hidden>
@@ -371,49 +70,67 @@ dialog p{margin:0;padding:12px 18px;font-size:.84rem;color:var(--suave)}
     <span class="sep" aria-hidden="true"></span>
     <div><p>Planta dos ambientes</p><h1 id="tt-local"></h1></div>
   </div>
-  <div class="tt-hora" aria-live="off"><strong id="tt-hora"></strong><span id="tt-data"></span><span class="tt-agora" id="tt-agora"></span></div>
+  <div class="tt-hora"><strong id="tt-hora"></strong><span id="tt-data"></span><span class="tt-agora" id="tt-agora"></span></div>
 </header>
 
-<main class="painel">
-  <section class="cartao planta" id="painel-planta" role="tabpanel" aria-labelledby="titulo-local">
-    <div class="planta-cab" data-modo="ver editar">
-      <div><h2 id="titulo-local"></h2><p id="sub-local"></p></div>
-      <div class="ferramentas">
-        <div class="seg" role="group" aria-label="Dia da semana" id="dias"></div>
-        <div class="seg" role="group" aria-label="Turno" id="turnos"></div>
-        <button type="button" class="btn" id="b3d" aria-pressed="false" data-modo="ver"><svg class="ic"><use href="#i-3d"/></svg>3D</button>
-        <div class="grupo" role="group" aria-label="Zoom da planta">
-          <button type="button" class="btn" id="zmenos" aria-label="Diminuir zoom"><svg class="ic"><use href="#i-menos"/></svg></button>
-          <button type="button" class="btn" id="zajustar" aria-label="Ajustar planta à tela"><svg class="ic"><use href="#i-ajustar"/></svg></button>
-          <button type="button" class="btn" id="zmais" aria-label="Aumentar zoom"><svg class="ic"><use href="#i-mais"/></svg></button>
+<div class="barra-salvar" data-modo="editar" hidden>
+  <div class="bs-linha">
+    <nav class="secoes" id="secoes" aria-label="Seções do editor"></nav>
+    <div class="bs-acoes">
+      <!-- Acesso rápido ao tempo de atualização do telão (o mesmo campo de Editor › Telão) -->
+      <details class="menu" id="menu-recarga">
+        <summary class="btn" title="De quanto em quanto tempo o telão busca a versão salva · clique para mudar"><svg class="ic"><use href="#i-tela"/></svg><span id="recarga-rotulo">Telão: 15 s</span></summary>
+        <div class="menu-corpo menu-recarga">
+          <label for="c-recarga-rapido">Atualizar o telão a cada (segundos)</label>
+          <input id="c-recarga-rapido" type="number" min="5" max="3600" step="1" inputmode="numeric" data-cfg="recarga">
+          <p class="ajuda" id="c-recarga-rapido-ajuda"></p>
         </div>
-        <button type="button" class="btn" id="bcroqui"><svg class="ic"><use href="#i-foto"/></svg>Croqui</button>
-        <a class="btn" href="#telao" id="btelao" data-modo="ver"><svg class="ic"><use href="#i-tela"/></svg>Modo telão</a>
-      </div>
-    </div>
-    <div class="barra-ed" id="barra-ed" data-modo="editar" hidden>
-      <div class="seg" role="group" aria-label="Ferramenta" id="ferr">
-        <button type="button" data-ferr="sel" aria-pressed="true">Selecionar e mover</button>
-        <button type="button" data-ferr="parede" aria-pressed="false">Parede</button>
-        <button type="button" data-ferr="porta" aria-pressed="false">Porta</button>
-      </div>
-      <div class="seg" role="group" aria-label="Tipo de parede" id="tipo-parede" hidden>
-        <button type="button" data-ext="0" aria-pressed="true">Interna</button>
-        <button type="button" data-ext="1" aria-pressed="false">Externa</button>
-      </div>
-      <span class="div" aria-hidden="true"></span>
-      <div class="grupo">
-        <button type="button" class="btn" id="b-add-sala">+ Sala</button>
-        <button type="button" class="btn" id="b-add-zona">+ Zona</button>
-        <button type="button" class="btn" id="b-add-texto">+ Texto</button>
-      </div>
-      <span class="div" aria-hidden="true"></span>
+      </details>
+      <p class="estado-pub" id="pub-estado"><i aria-hidden="true"></i><span></span></p>
       <div class="grupo">
         <button type="button" class="btn" id="b-desfazer" aria-label="Desfazer (Ctrl+Z)"><svg class="ic"><use href="#i-desfazer"/></svg></button>
         <button type="button" class="btn" id="b-refazer" aria-label="Refazer (Ctrl+Shift+Z)"><svg class="ic"><use href="#i-refazer"/></svg></button>
       </div>
-      <p class="ed-dica" id="ed-dica" aria-live="polite"></p>
-      <div class="faixa" id="ed-rascunho" hidden></div>
+      <button type="button" class="btn btn-pri" id="b-publicar">Salvar alterações</button>
+      <details class="menu" id="menu-mais"><summary class="btn">Mais</summary>
+        <div class="menu-corpo">
+          <button type="button" id="b-historico">Histórico de versões</button>
+          <button type="button" id="b-baixar">Baixar cópia (dados.js)</button>
+          <button type="button" id="b-descartar">Descartar alterações</button>
+        </div>
+      </details>
+      <div class="conta" id="conta"></div>
+    </div>
+  </div>
+  <div class="faixa" id="ed-rascunho" hidden></div>
+  <p class="msg" id="pub-msg" role="status"></p>
+</div>
+
+<main class="painel" data-modo="ver editar telao" data-secao="planta calendario telao">
+  <section class="cartao planta" id="painel-planta" aria-labelledby="titulo-local" data-modo="ver editar telao" data-secao="planta telao">
+    <div class="planta-cab" data-modo="ver editar">
+      <div><h2 id="titulo-local"></h2><p id="sub-local"></p></div>
+      <div class="ferramentas">
+        <div class="data-nav" role="group" aria-label="Data mostrada na planta">
+          <button type="button" class="btn" id="d-ant" aria-label="Dia anterior"><svg class="ic"><use href="#i-ant"/></svg></button>
+          <input type="date" id="data-plano" aria-label="Data mostrada na planta">
+          <button type="button" class="btn" id="d-hoje">Hoje</button>
+          <button type="button" class="btn" id="d-prox" aria-label="Próximo dia"><svg class="ic"><use href="#i-prox"/></svg></button>
+        </div>
+        <div class="seg" role="group" aria-label="Turno" id="turnos"></div>
+        <button type="button" class="btn" id="b3d" aria-pressed="false" data-modo="ver"><svg class="ic"><use href="#i-3d"/></svg>3D</button>
+        <span class="rotulo" data-modo="editar" data-secao="planta telao">Vista do telão</span>
+        <button type="button" class="btn" id="bespelho" aria-pressed="false" data-modo="ver editar" data-secao="planta telao" title="Espelhar a planta: esquerda ↔ direita"><svg class="ic"><use href="#i-espelho"/></svg>Espelhar</button>
+        <button type="button" class="btn" id="brotacao" data-modo="ver editar" data-secao="planta telao" title="Girar a planta 90° no sentido horário"><svg class="ic"><use href="#i-girar"/></svg>Girar</button>
+        <button type="button" class="btn" id="zajustar" data-modo="ver editar" data-secao="planta telao" title="Voltar à vista original: sem zoom, sem giro e sem espelho"><svg class="ic"><use href="#i-original"/></svg>Original</button>
+        <div class="grupo" role="group" aria-label="Zoom da planta" data-modo="ver editar" data-secao="planta telao">
+          <button type="button" class="btn" id="zmenos" aria-label="Diminuir zoom"><svg class="ic"><use href="#i-menos"/></svg></button>
+          <button type="button" class="btn" id="zmais" aria-label="Aumentar zoom"><svg class="ic"><use href="#i-mais"/></svg></button>
+        </div>
+        <p class="sr" id="vista-aviso" aria-live="polite"></p>
+        <button type="button" class="btn" id="bcroqui"><svg class="ic"><use href="#i-foto"/></svg>Croqui</button>
+        <a class="btn" href="#telao" id="btelao" data-modo="ver"><svg class="ic"><use href="#i-tela"/></svg>Modo telão</a>
+      </div>
     </div>
     <div class="vista" id="vista">
       <div class="palco" id="palco">
@@ -422,24 +139,93 @@ dialog p{margin:0;padding:12px 18px;font-size:.84rem;color:var(--suave)}
           <div class="camadas" id="camadas"></div>
         </div>
       </div>
+      <!-- Editor da planta (js/desenho.js): barra de ferramentas flutuante, zoom, dica, atalhos e menu de contexto -->
+      <div class="tela-ui" data-modo="editar" data-secao="planta" hidden>
+        <div class="ferr" id="ferr" role="toolbar" aria-label="Ferramentas da planta">
+          <button type="button" data-ferr="sel" aria-pressed="true" aria-label="Selecionar e mover (V)" title="Selecionar e mover · V"><svg class="ic"><use href="#i-cursor"/></svg><kbd aria-hidden="true">V</kbd></button>
+          <button type="button" data-ferr="mao" aria-pressed="false" aria-label="Mover a vista (H, ou segure Espaço)" title="Mover a vista · H ou segure Espaço"><svg class="ic"><use href="#i-mao"/></svg><kbd aria-hidden="true">H</kbd></button>
+          <span class="div" aria-hidden="true"></span>
+          <button type="button" data-ferr="sala" aria-pressed="false" aria-label="Sala: arraste para desenhar (S)" title="Sala · S"><svg class="ic"><use href="#i-sala"/></svg><kbd aria-hidden="true">S</kbd></button>
+          <button type="button" data-ferr="zona" aria-pressed="false" aria-label="Zona aberta (Z)" title="Zona aberta · Z"><svg class="ic"><use href="#i-zona"/></svg><kbd aria-hidden="true">Z</kbd></button>
+          <button type="button" data-ferr="piso" aria-pressed="false" aria-label="Circulação: corredor ou hall (C)" title="Circulação · C"><svg class="ic"><use href="#i-circ"/></svg><kbd aria-hidden="true">C</kbd></button>
+          <span class="div" aria-hidden="true"></span>
+          <button type="button" data-ferr="parede" aria-pressed="false" aria-label="Parede (P)" title="Parede · P"><svg class="ic"><use href="#i-parede"/></svg><kbd aria-hidden="true">P</kbd></button>
+          <button type="button" data-ferr="porta" aria-pressed="false" aria-label="Porta (O)" title="Porta · O"><svg class="ic"><use href="#i-porta"/></svg><kbd aria-hidden="true">O</kbd></button>
+          <span class="div" aria-hidden="true"></span>
+          <button type="button" data-ferr="texto" aria-pressed="false" aria-label="Texto (T)" title="Texto · T"><svg class="ic"><use href="#i-texto"/></svg><kbd aria-hidden="true">T</kbd></button>
+          <button type="button" data-ferr="acesso" aria-pressed="false" aria-label="Indicação de acesso, como ENTRADA (A)" title="Indicação de acesso · A"><svg class="ic"><use href="#i-acesso"/></svg><kbd aria-hidden="true">A</kbd></button>
+        </div>
+        <div class="ferr-op" id="ferr-op" hidden>
+          <label class="check" id="op-sala"><input type="checkbox" id="op-paredes" checked> Criar as paredes do contorno</label>
+          <div class="seg" role="group" aria-label="Tipo de parede" id="op-parede"><button type="button" data-ext="0" aria-pressed="true">Interna (fina)</button><button type="button" data-ext="1" aria-pressed="false">Externa (grossa)</button></div>
+        </div>
+        <div class="tela-zoom" role="group" aria-label="Zoom da planta">
+          <button type="button" data-tela="menos" aria-label="Diminuir zoom" title="Diminuir zoom · −">−</button>
+          <button type="button" data-tela="cem" id="z-pct" title="Zoom atual · clique para voltar a 100% (Shift+0)">100%</button>
+          <button type="button" data-tela="mais" aria-label="Aumentar zoom" title="Aumentar zoom · +">+</button>
+          <button type="button" data-tela="enquadrar" aria-label="Ajustar a planta à tela" title="Ajustar à tela · Shift+1"><svg class="ic"><use href="#i-cheia"/></svg></button>
+        </div>
+        <p class="ed-dica" id="ed-dica" aria-live="polite"></p>
+        <div class="tela-acoes">
+          <button type="button" class="btn" data-tela="atalhos" aria-expanded="false" aria-controls="atalhos" aria-label="Atalhos de teclado" title="Atalhos de teclado · ?"><svg class="ic"><use href="#i-teclado"/></svg></button>
+          <button type="button" class="btn" data-tela="cheio" id="b-cheio" aria-pressed="false" aria-label="Tela cheia do editor" title="Tela cheia do editor"><svg class="ic"><use href="#i-expandir"/></svg></button>
+        </div>
+        <div class="atalhos" id="atalhos" hidden>
+          <h4>Ferramentas</h4>
+          <dl>
+            <dt><kbd class="k">V</kbd></dt><dd>Selecionar e mover</dd>
+            <dt><kbd class="k">H</kbd> ou <kbd class="k">Espaço</kbd></dt><dd>Mover a vista (segure Espaço e arraste)</dd>
+            <dt><kbd class="k">S</kbd> <kbd class="k">Z</kbd> <kbd class="k">C</kbd></dt><dd>Sala, zona aberta, circulação</dd>
+            <dt><kbd class="k">P</kbd> <kbd class="k">O</kbd></dt><dd>Parede, porta</dd>
+            <dt><kbd class="k">T</kbd> <kbd class="k">A</kbd></dt><dd>Texto, indicação de acesso</dd>
+          </dl>
+          <h4>Edição</h4>
+          <dl>
+            <dt>Dois cliques, <kbd class="k">F2</kbd></dt><dd>Renomear (na porta: girar)</dd>
+            <dt><kbd class="k">Shift</kbd> + clique</dt><dd>Somar ou tirar da seleção</dd>
+            <dt>Arrastar no vazio</dt><dd>Selecionar uma área</dd>
+            <dt><kbd class="k">Alt</kbd> + arrastar</dt><dd>Duplicar e mover a cópia</dd>
+            <dt><kbd class="k">Shift</kbd> + arrastar</dt><dd>Só na horizontal ou na vertical</dd>
+            <dt><kbd class="k">⌘</kbd> no Mac, <kbd class="k">Ctrl</kbd> nos outros + arrastar</dt><dd>Sem ímã (posição livre)</dd>
+            <dt><kbd class="k">Ctrl/⌘</kbd> + <kbd class="k">D</kbd> <kbd class="k">C</kbd> <kbd class="k">V</kbd> <kbd class="k">X</kbd></dt><dd>Duplicar, copiar, colar, recortar</dd>
+            <dt><kbd class="k">Ctrl/⌘</kbd> + <kbd class="k">A</kbd></dt><dd>Selecionar tudo</dd>
+            <dt>Setas</dt><dd>Mover 5 unidades (com Shift, 1)</dd>
+            <dt><kbd class="k">Delete</kbd></dt><dd>Excluir</dd>
+            <dt><kbd class="k">Ctrl/⌘</kbd> + <kbd class="k">Z</kbd></dt><dd>Desfazer (com Shift, refazer)</dd>
+            <dt><kbd class="k">Esc</kbd></dt><dd>Cancelar, voltar à seleção, soltar a seleção</dd>
+            <dt>Botão direito</dt><dd>Menu com as ações</dd>
+          </dl>
+          <h4>Vista</h4>
+          <dl>
+            <dt>Roda do mouse</dt><dd>Rolar (com Shift, para os lados)</dd>
+            <dt><kbd class="k">Ctrl/⌘</kbd> + roda, pinça</dt><dd>Zoom no ponto do mouse</dd>
+            <dt><kbd class="k">+</kbd> <kbd class="k">−</kbd></dt><dd>Zoom</dd>
+            <dt><kbd class="k">Shift</kbd> + <kbd class="k">1</kbd></dt><dd>Ajustar à tela</dd>
+            <dt><kbd class="k">Shift</kbd> + <kbd class="k">0</kbd></dt><dd>Zoom de 100%</dd>
+          </dl>
+        </div>
+        <div class="menu-ctx" id="menu-ctx" role="menu" aria-label="Ações da planta" hidden></div>
+        <div class="etiqueta" id="ed-etiqueta" hidden></div>
+      </div>
     </div>
   </section>
 
-  <aside class="lateral" data-modo="ver editar">
-    <section class="cartao bloco det">
+  <aside class="lateral" data-modo="ver editar" data-secao="planta telao">
+    <section class="cartao bloco" id="card-recados" data-modo="ver">
+      <h3>Recados</h3>
+      <ul class="rec-ver" id="rec-ver"></ul>
+    </section>
+    <section class="cartao bloco det" data-modo="ver editar" data-secao="planta">
       <h3 id="det-titulo">Ambiente</h3>
       <div id="detalhe"></div>
     </section>
-    <section class="cartao bloco" id="card-publicar" data-modo="editar" hidden>
-      <h3>Publicar no site</h3>
-      <p class="estado-pub" id="pub-estado"><i></i><span></span></p>
-      <div id="pub-token"></div>
-      <div class="botoes" style="margin-top:12px">
-        <button type="button" class="btn btn-pri" id="b-publicar">Publicar alterações</button>
-        <button type="button" class="btn" id="b-baixar">Baixar dados.js</button>
-        <button type="button" class="btn btn-perigo" id="b-descartar">Descartar alterações</button>
-      </div>
-      <p class="msg" id="pub-msg" role="status"></p>
+    <section class="cartao bloco" id="card-espacos" data-modo="editar" data-secao="planta">
+      <h3 id="esp-titulo">Espaços</h3>
+      <div id="esp-corpo"></div>
+    </section>
+    <section class="cartao bloco" id="card-telao" data-modo="editar" data-secao="telao">
+      <h3>Configurar telão</h3>
+      <div class="form" id="form-telao"></div>
     </section>
     <section class="cartao bloco" data-modo="ver">
       <h3 id="ocup-titulo">Aulas</h3>
@@ -448,34 +234,68 @@ dialog p{margin:0;padding:12px 18px;font-size:.84rem;color:var(--suave)}
       <p class="nota-dia" id="nota-dia" hidden></p>
       <table class="tab-ocup" id="tab-ocup"><thead></thead><tbody></tbody></table>
     </section>
-    <section class="cartao bloco">
+    <section class="cartao bloco" data-modo="ver">
       <h3>Legenda</h3>
       <ul class="leg" id="legenda"></ul>
     </section>
   </aside>
 
-  <aside class="telao-lado" id="telao-lado" data-modo="telao" aria-live="polite" hidden></aside>
-
-  <section class="cartao quadro" id="quadro" data-modo="editar" hidden>
-    <div class="quadro-cab">
-      <h3>Quadro de aulas da semana</h3>
+  <section class="cartao cal" id="calendario" data-modo="ver editar" data-secao="calendario" aria-labelledby="cal-h">
+    <div class="cal-cab">
+      <div><h2 id="cal-h">Calendário de enturmação</h2><p id="cal-intervalo"><span id="cal-periodo"></span> · <span id="cal-fonte"></span></p><p class="ajuda" data-modo="editar">Só leitura: as aulas vêm da planilha oficial. Para mudar uma aula, <a id="cal-planilha" target="_blank" rel="noopener">abra a planilha</a>; o site atualiza sozinho.</p></div>
       <div class="ferramentas">
-        <div class="seg" role="group" aria-label="Dia do quadro" id="quadro-dias"></div>
-        <label class="rotulo" for="quadro-destino">Copiar este dia para</label>
-        <select id="quadro-destino" style="width:auto;min-height:38px;border:1px solid var(--linha-forte);border-radius:8px;padding:0 8px"></select>
-        <button type="button" class="btn" id="b-copiar">Copiar</button>
+        <div class="seg" role="group" aria-label="Período mostrado" id="cal-dias">
+          <button type="button" data-cal-dias="7" aria-pressed="true">1 semana</button>
+          <button type="button" data-cal-dias="15" aria-pressed="false">15 dias</button>
+          <button type="button" data-cal-dias="30" aria-pressed="false">30 dias</button>
+        </div>
+        <div class="grupo" role="group" aria-label="Navegar no calendário">
+          <button type="button" class="btn" id="cal-ant" aria-label="Período anterior"><svg class="ic"><use href="#i-ant"/></svg></button>
+          <button type="button" class="btn" id="cal-hoje">Esta semana</button>
+          <button type="button" class="btn" id="cal-prox" aria-label="Próximo período"><svg class="ic"><use href="#i-prox"/></svg></button>
+        </div>
+        <div class="seg" role="group" aria-label="Forma de exibição" id="cal-modo">
+          <button type="button" data-cal-modo="grade" aria-pressed="true">Grade</button>
+          <button type="button" data-cal-modo="lista" aria-pressed="false">Lista</button>
+        </div>
       </div>
     </div>
-    <p class="ajuda" style="margin-bottom:10px">Digite as turmas ou aulas de cada turno, separadas por vírgula (ex.: <em>801, Robótica 2A</em>). Célula vazia aparece como “Livre”.</p>
-    <div class="rolagem">
-      <table class="tab-quadro" id="tab-quadro">
-        <thead><tr><th scope="col">Ambiente</th><th scope="col">Manhã</th><th scope="col">Tarde</th><th scope="col">Noite</th><th scope="col">Sem turno</th><th scope="col"><span class="rotulo">Remover</span></th></tr></thead>
-        <tbody></tbody>
-        <tfoot><tr><td colspan="6"><div class="add-quadro"><label class="rotulo" for="quadro-add">Incluir ambiente no quadro</label><select id="quadro-add"></select><button type="button" class="btn" id="b-quadro-add">Incluir</button></div></td></tr></tfoot>
-      </table>
+    <div class="cal-filtros">
+      <label for="cal-local">Área</label><select id="cal-local"></select>
+      <label for="cal-busca">Buscar</label><input type="search" id="cal-busca" placeholder="Turma, módulo, professor(a) ou ambiente">
+      <label class="check"><input type="checkbox" id="cal-fds"> Fins de semana</label>
+      <label class="check" id="cal-todos-l"><input type="checkbox" id="cal-todos"> Todos os espaços</label>
+      <span class="cal-leg"><span class="pill tn-m">M · Manhã</span><span class="pill tn-t">T · Tarde</span><span class="pill tn-n">N · Noite</span></span>
     </div>
+    <div class="cal-rolagem" tabindex="0" aria-label="Calendário de enturmação"><table class="cal-tab" id="cal-tab"><thead></thead><tbody></tbody></table></div>
   </section>
+
+  <aside class="telao-lado" id="telao-lado" data-modo="telao" aria-live="polite" hidden></aside>
 </main>
+
+
+
+<section class="cartao bloco rec-ed" id="sec-recados" data-modo="editar" data-secao="recados" aria-labelledby="rec-h" hidden>
+  <h3 id="rec-h">Recados do telão</h3>
+  <p class="ajuda">Os recados ativos passam numa faixa na parte de baixo do telão e também aparecem no link público.</p>
+  <div class="letreiro previa" id="letreiro-previa"><span class="letreiro-rotulo">Recados</span><div class="letreiro-trilho" aria-hidden="true"><div class="letreiro-texto"></div></div><p class="sr letreiro-sr"></p></div>
+  <div class="rec-grade">
+    <form class="form" id="form-rec" novalidate>
+      <h4 id="rec-titulo">Novo recado</h4>
+      <div class="campo"><label for="r-texto">Mensagem</label><textarea id="r-texto" rows="3" maxlength="300"></textarea><small class="ajuda" id="r-cont">0/300</small></div>
+      <div class="lin2">
+        <div class="campo"><label for="r-inicio">Mostrar a partir de <small>(opcional)</small></label><input type="date" id="r-inicio"></div>
+        <div class="campo"><label for="r-fim">Até <small>(opcional)</small></label><input type="date" id="r-fim"></div>
+      </div>
+      <label class="check"><input type="checkbox" id="r-destaque"> Destacar como importante</label>
+      <p class="msg erro" id="r-erro" role="alert"></p>
+      <div class="botoes"><button type="submit" class="btn btn-pri" id="r-ok">Adicionar recado</button><button type="button" class="btn" id="r-cancelar" hidden>Cancelar edição</button></div>
+    </form>
+    <div><h4 class="rec-sub">Recados cadastrados</h4><ul class="rec-lista" id="rec-lista"></ul></div>
+  </div>
+</section>
+
+<div class="letreiro" id="letreiro" data-modo="telao" hidden><span class="letreiro-rotulo">Recados</span><div class="letreiro-trilho" aria-hidden="true"><div class="letreiro-texto"></div></div><p class="sr letreiro-sr"></p></div>
 
 <footer class="rodape" data-modo="ver editar"><span id="rodape-txt"></span><span class="ponto">.</span></footer>
 
@@ -485,956 +305,56 @@ dialog p{margin:0;padding:12px 18px;font-size:.84rem;color:var(--suave)}
 </footer>
 
 <div class="telao-ctrl" data-modo="telao" hidden>
-  <button type="button" class="btn" id="tc-ant" aria-label="Ambiente anterior"><svg class="ic"><use href="#i-ant"/></svg></button>
-  <button type="button" class="btn" id="tc-prox" aria-label="Próximo ambiente"><svg class="ic"><use href="#i-prox"/></svg></button>
+  <button type="button" class="btn" id="tc-ant" aria-label="Área anterior"><svg class="ic"><use href="#i-ant"/></svg></button>
+  <button type="button" class="btn" id="tc-prox" aria-label="Próxima área"><svg class="ic"><use href="#i-prox"/></svg></button>
   <button type="button" class="btn" id="tc-girar" aria-pressed="true"><svg class="ic"><use href="#i-pausa"/></svg>Alternar</button>
   <label class="rotulo" for="tc-turno" style="color:#C9D6F2">Mostrar</label>
   <select id="tc-turno"></select>
-  <select id="tc-dia" aria-label="Dia"></select>
+  <input type="date" id="tc-data" aria-label="Data mostrada">
   <button type="button" class="btn" id="tc-3d" aria-pressed="false"><svg class="ic"><use href="#i-3d"/></svg>3D</button>
   <button type="button" class="btn" id="tc-cheia"><svg class="ic"><use href="#i-cheia"/></svg>Tela cheia</button>
   <a class="btn" href="#andar1" id="tc-sair"><svg class="ic"><use href="#i-sair"/></svg>Sair</a>
 </div>
 
-<dialog id="dlg" aria-labelledby="dlg-titulo">
-  <div class="dlg-cab">
-    <h2 id="dlg-titulo">Croqui original</h2>
-    <button type="button" class="btn" id="dlg-fechar" aria-label="Fechar"><svg class="ic"><use href="#i-fechar"/></svg></button>
-  </div>
+<dialog id="dlg" class="fecha-fora" aria-labelledby="dlg-titulo">
+  <div class="dlg-cab"><h2 id="dlg-titulo">Croqui original</h2><button type="button" class="btn" data-fechar aria-label="Fechar"><svg class="ic"><use href="#i-fechar"/></svg></button></div>
   <img id="dlg-img" alt="" width="1200" height="900">
   <p>Foto do croqui com a orientação ajustada para coincidir com a planta digital.</p>
 </dialog>
 
+<dialog id="dlg-login" class="dlg-form" aria-labelledby="login-titulo">
+  <form id="form-login" novalidate>
+    <div class="dlg-cab"><h2 id="login-titulo">Entrar para salvar</h2><button type="button" class="btn" data-fechar aria-label="Fechar"><svg class="ic"><use href="#i-fechar"/></svg></button></div>
+    <div class="dlg-corpo form">
+      <p class="ajuda">Use o usuário de editor cadastrado no banco de dados.</p>
+      <div class="campo"><label for="f-email">E-mail</label><input id="f-email" type="email" autocomplete="username"></div>
+      <div class="campo"><label for="f-senha">Senha</label><input id="f-senha" type="password" autocomplete="current-password"></div>
+      <p class="msg" id="login-msg" role="status"></p>
+    </div>
+    <div class="dlg-rodape"><span class="espaco"></span><button type="button" class="btn" data-fechar>Cancelar</button><button type="submit" class="btn btn-pri">Entrar</button></div>
+  </form>
+</dialog>
+
+<dialog id="dlg-hist" class="dlg-form fecha-fora" aria-labelledby="hist-titulo">
+  <div class="dlg-cab"><h2 id="hist-titulo">Histórico de versões</h2><button type="button" class="btn" data-fechar aria-label="Fechar"><svg class="ic"><use href="#i-fechar"/></svg></button></div>
+  <div class="dlg-corpo"><p class="ajuda">Abrir uma versão coloca o conteúdo dela no editor. Para ela voltar a valer, clique em “Salvar alterações”.</p><ol class="hist-lista" id="hist-lista"></ol></div>
+</dialog>
+
+<dialog id="dlg-confirma" class="dlg-form" aria-labelledby="conf-titulo" aria-describedby="conf-texto">
+  <div class="dlg-cab"><h2 id="conf-titulo">Confirmar</h2><button type="button" class="btn" data-fechar aria-label="Fechar"><svg class="ic"><use href="#i-fechar"/></svg></button></div>
+  <div class="dlg-corpo"><p class="conf-texto" id="conf-texto"></p></div>
+  <div class="dlg-rodape"><span class="espaco"></span><button type="button" class="btn" data-fechar>Cancelar</button><button type="button" class="btn btn-pri" id="conf-ok">Confirmar</button></div>
+</dialog>
+
 <script src="dados.js"></script>
-<script>
-'use strict';
-/* Repositório onde o modo de edição publica (GitHub Pages serve o site a partir dele). */
-const CONFIG = { dono: 'jborges42', repo: 'complexo.educacional.senai', ramo: 'main', arquivo: 'dados.js' };
-const GIRO_MS = 20000, RECARGA_MS = 120000;
-
-const $ = (s, el = document) => el.querySelector(s);
-const $$ = (s, el = document) => [...el.querySelectorAll(s)];
-const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-const CAT = { ensino: 'Salas multiuso', lab: 'Laboratórios', admin: 'Administrativo', conv: 'Convivência', serv: 'Serviços', circ: 'Circulação' };
-const CORES = { ensino: '#164193', lab: '#008AD1', admin: '#F08A00', conv: '#52AE32', serv: '#009E96', circ: '#7A869E' };
-const POSTIT = { rosa: '#FF5C93', amarelo: '#FFE433', limao: '#CDEB3B', laranja: '#FFA928' };
-const POSTIT_NOME = { rosa: 'Rosa', amarelo: 'Amarelo', limao: 'Verde-limão', laranja: 'Laranja' };
-const DIAS = { seg: 'Segunda-feira', ter: 'Terça-feira', qua: 'Quarta-feira', qui: 'Quinta-feira', sex: 'Sexta-feira' };
-const TURNOS = { m: 'Manhã', t: 'Tarde', n: 'Noite', d: 'Sem turno' };
-const TIPOS = { sala: 'Sala (paredes à parte)', zona: 'Zona aberta (tracejada)', piso: 'Circulação (piso)', veiculo: 'Carreta / veículo' };
-const ZOOMS = [1, 1.25, 1.5, 2, 2.5];
-
-let dados = window.DADOS;
-let publicado = JSON.stringify(dados);
-const fotosNovas = {};
-const desfazer = [], refazer = [];
-let arrasto = null, vbFixo = null, antesCampo = null, shaBase = null, ocioso = null, giro = null;
-
-function agora() {
-  const d = new Date(), h = d.getHours() + d.getMinutes() / 60;
-  const dia = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sab'][d.getDay()];
-  if (dia === 'dom' || dia === 'sab') return { dia: 'seg', turno: 'm', fimDeSemana: true };
-  return { dia, turno: h < 12.5 ? 'm' : h < 18 ? 't' : 'n' };
-}
-const estado = { modo: 'ver', local: 'andar1', sel: null, alvo: null, dia: agora().dia, turno: 'todos', turma: null, zoom: 0, d3: false, ferramenta: 'sel', paredeExt: 0, auto: true, girar: true };
-
-const base = $('#base'), camadas = $('#camadas'), palco = $('#palco'), vista = $('#vista');
-const Lc = () => dados.locais[estado.local];
-const lst = (o, k) => (o && o[k]) || [];
-const juntar = l => l.join(' · ');
-const aulasDe = (a, dia = estado.dia) => a.aulas ? (a.aulas[dia] || {}) : null;
-const usaTurma = (a, c, dia) => { const o = aulasDe(a, dia); return !!o && ['m', 't', 'n', 'd'].some(k => lst(o, k).includes(c)); };
-const todos = () => Object.entries(dados.locais).flatMap(([lid, L]) => L.ambientes.map(a => ({ lid, L, a })));
-const sn = v => Math.round(v / 5) * 5;
-const num = v => { const n = parseFloat(String(v).replace(',', '.')); return Number.isFinite(n) ? n : 0; };
-const maiusc = s => s.charAt(0).toUpperCase() + s.slice(1);
-const arred = (x, y, w, h, r = 14) => { r = Math.min(r, w / 2, h / 2); return `M${x + r} ${y}H${x + w - r}A${r} ${r} 0 0 1 ${x + w} ${y + r}V${y + h - r}A${r} ${r} 0 0 1 ${x + w - r} ${y + h}H${x + r}A${r} ${r} 0 0 1 ${x} ${y + h - r}V${y + r}A${r} ${r} 0 0 1 ${x + r} ${y}Z`; };
-const dataBr = iso => { const d = new Date(iso); return isNaN(d) ? '' : d.toLocaleDateString('pt-BR') + ' às ' + d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }); };
-
-/* ---------- Geometria ---------- */
-// Portas cortam as paredes onde estão; aberturas sem porta são vãos na própria parede.
-function cortar(paredes, portas) {
-  const out = [];
-  for (const [x1, y1, x2, y2, e] of paredes) {
-    const h = Math.abs(y1 - y2) < .5, v = Math.abs(x1 - x2) < .5;
-    if (!h && !v) { out.push([x1, y1, x2, y2, e]); continue; }
-    const c = h ? y1 : x1;
-    let partes = [[Math.min(h ? x1 : y1, h ? x2 : y2), Math.max(h ? x1 : y1, h ? x2 : y2)]];
-    for (const p of portas) {
-      if ((p.o === 'h') !== h || Math.abs((h ? p.y : p.x) - c) > 4) continue;
-      const pa = h ? p.x : p.y, pb = pa + p.w;
-      partes = partes.flatMap(([s, t]) => pb <= s || pa >= t ? [[s, t]] : [[s, pa], [pb, t]].filter(([u, w]) => w - u > .5));
-    }
-    for (const [s, t] of partes) out.push(h ? [s, c, t, c, e] : [c, s, c, t, e]);
-  }
-  return out;
-}
-function portaSVG(p) {
-  const h = p.o === 'h', w = p.w, inv = p.inv ? 1 : 0;
-  const hx = h ? p.x + inv * w : p.x, hy = h ? p.y : p.y + inv * w;
-  const dx = h ? (inv ? -1 : 1) : 0, dy = h ? 0 : (inv ? -1 : 1), nx = h ? 0 : p.lado, ny = h ? p.lado : 0;
-  const ax = hx + nx * w, ay = hy + ny * w, bx = hx + dx * w, by = hy + dy * w;
-  return `<path class="folha" d="M${hx} ${hy}L${ax} ${ay}"/><path class="arco" d="M${ax} ${ay}A${w} ${w} 0 0 ${nx * dy - ny * dx > 0 ? 1 : 0} ${bx} ${by}"/>`;
-}
-const portaBB = p => p.o === 'h' ? [p.x, Math.min(p.y, p.y + p.lado * p.w), p.w, p.w] : [Math.min(p.x, p.x + p.lado * p.w), p.y, p.w, p.w];
-function limites(L) {
-  let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
-  const inc = (a, b, c, d) => { x0 = Math.min(x0, a, c); y0 = Math.min(y0, b, d); x1 = Math.max(x1, a, c); y1 = Math.max(y1, b, d); };
-  L.ambientes.forEach(a => inc(a.x, a.y, a.x + a.w, a.y + a.h));
-  L.paredes.forEach(([a, b, c, d]) => inc(a, b, c, d));
-  L.marcas.forEach(m => { const w = m.t.length * 9.5 + 8; inc(m.ancora === 'end' ? m.x - w : m.x - w / 2, m.y - 10, m.ancora === 'end' ? m.x : m.x + w / 2, m.y + 10); inc(...m.seta); });
-  L.textos.forEach(t => { const w = t.t.length * (t.nota ? 6.6 : 8.4); inc(t.x - w / 2, t.y - 12, t.x + w / 2, t.y + 6); });
-  if (L.patio) inc(L.patio[0], L.patio[1], L.patio[0] + L.patio[2], L.patio[1] + L.patio[3]);
-  if (!Number.isFinite(x0)) return [0, 0, 1000, 600];
-  const p = 26;
-  return [x0 - p, y0 - p, x1 - x0 + 2 * p, y1 - y0 + 2 * p];
-}
-
-/* ---------- Desenho ---------- */
-function ambSVG(a, k) {
-  const t = a.tipo || 'sala', d = 6, rx = a.rx ?? (t === 'veiculo' ? 14 : 0);
-  const f = a.forma === 'elipse'
-    ? `<ellipse class="forma" cx="${a.x + a.w / 2}" cy="${a.y + a.h / 2}" rx="${a.w / 2}" ry="${a.h / 2}"/><ellipse class="realce" cx="${a.x + a.w / 2}" cy="${a.y + a.h / 2}" rx="${Math.max(a.w / 2 - d, 1)}" ry="${Math.max(a.h / 2 - d, 1)}"/>`
-    : `<rect class="forma" x="${a.x}" y="${a.y}" width="${a.w}" height="${a.h}" rx="${rx}"/><rect class="realce" x="${a.x + d}" y="${a.y + d}" width="${Math.max(a.w - 2 * d, 1)}" height="${Math.max(a.h - 2 * d, 1)}" rx="${Math.max(rx - d, 2)}"/>`;
-  return `<g class="amb cat-${a.cat} t-${t}" data-id="${esc(a.id)}" style="--k:${k}" tabindex="0" role="button" aria-pressed="false" aria-label="${esc(a.nome)}, ${CAT[a.cat]}">${f}</g>`;
-}
-function centro(a) { return [a.x + (a.lx ?? a.w / 2), a.y + (a.ly ?? a.h / 2)]; }
-function rotulo(a, k) {
-  const t = a.tipo || 'sala', piso = t === 'piso';
-  const ls = (a.rot ?? [a.nome]).map(l => piso ? l.toUpperCase() : l);
-  const [cx, cy] = centro(a), tam = piso ? 10.5 : (a.tam || 15), lh = tam * 1.2;
-  const n = ls.length + (a.sub ? 1 : 0), y0 = cy - (n - 1) * lh / 2;
-  let tx = ls.map((l, i) => `<tspan x="${cx}" y="${y0 + i * lh}">${esc(l)}</tspan>`).join('');
-  if (a.sub) tx += `<tspan class="rot-sub" x="${cx}" y="${y0 + ls.length * lh}">${esc(a.sub)}</tspan>`;
-  const gi = a.giro ? ` transform="rotate(${a.giro} ${cx} ${cy})"` : '';
-  const sh = estado.modo === 'telao' ? 28 : 22, sy = (n ? y0 + (n - 1) * lh + lh * .5 : cy - sh / 2 - 6) + 6;
-  const selo = a.aulas ? `<g class="selo" data-cx="${cx}"><rect x="${cx - 30}" y="${sy}" width="60" height="${sh}" rx="${sh / 2}"/><text x="${cx}" y="${sy + sh / 2}"></text></g>` : '';
-  return `<g class="r cat-${a.cat} t-${t}" data-r="${esc(a.id)}" style="--k:${k}"${gi}>${n ? `<text class="rot" style="font-size:${tam}px">${tx}</text>` : ''}${selo}</g>`;
-}
-const DEFS = '<defs><marker id="seta" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#E8490F"/></marker></defs>';
-
-function desenhar() {
-  const L = Lc(), ed = estado.modo === 'editar';
-  const vb = vbFixo || limites(L);
-  estado.vb = vb;
-  palco.style.aspectRatio = estado.modo === 'telao' ? '' : `${vb[2]} / ${vb[3]}`;
-  palco.style.setProperty('--ar', vb[2] / vb[3]);
-  const cortadas = cortar(L.paredes, L.portas);
-  const pp = e => cortadas.filter(p => !!p[4] === e).map(([a, b, c, d]) => `M${a} ${b}L${c} ${d}`).join('');
-  const veic = L.ambientes.filter(a => a.tipo === 'veiculo').map(a => arred(a.x, a.y, a.w, a.h, a.rx ?? 14)).join('');
-  const paredes = `<path class="par-ext" d="${pp(true)}"/><path class="par-int" d="${pp(false)}${veic}"/>`;
-  const fundo = L.patio ? `<rect class="patio" x="${L.patio[0]}" y="${L.patio[1]}" width="${L.patio[2]}" height="${L.patio[3]}" rx="18"/>` : '';
-  const textos = L.textos.map((t, i) => `<text class="${t.nota ? 'txt-nota' : 'txt-piso'}" data-t="${i}" x="${t.x}" y="${t.y}">${esc(t.t)}</text>`).join('');
-  const desenhos = L.ambientes.filter(a => a.desenho).map(a => `<g transform="translate(${a.x - a.ref[0]} ${a.y - a.ref[1]})">${a.desenho}</g>`).join('');
-  const marcas = L.marcas.map((m, i) => `<g class="acesso" data-m="${i}"><path d="M${m.seta[0]} ${m.seta[1]}L${m.seta[2]} ${m.seta[3]}" marker-end="url(#seta)"/><text x="${m.x}" y="${m.y}" text-anchor="${m.ancora || 'middle'}" dominant-baseline="central">${esc(m.t)}</text></g>`).join('');
-  base.setAttribute('viewBox', vb.join(' '));
-  base.setAttribute('aria-label', `Planta: ${L.nome}`);
-  base.innerHTML = DEFS + fundo + textos + `<g>${L.ambientes.map(ambSVG).join('')}</g><g class="desenhos">${desenhos}</g><g>${paredes}</g><g>${L.portas.map(portaSVG).join('')}</g><g>${L.ambientes.map(rotulo).join('')}</g>${marcas}` + (ed ? sobreposicao(L) : '');
-  camadas.innerHTML = estado.d3 ? Array.from({ length: 14 }, (_, i) => `<svg viewBox="${vb.join(' ')}" style="--i:${i + 1}" aria-hidden="true">${paredes}</svg>`).join('') : '';
-  estadosPlanta();
-}
-
-function sobreposicao(L) {
-  const al = estado.alvo, on = (t, i) => al && al.tipo === t && al.i === i ? ' on' : '';
-  let s = L.paredes.map(([a, b, c, d], i) => `<line class="hit-parede${on('parede', i)}" data-p="${i}" x1="${a}" y1="${b}" x2="${c}" y2="${d}"/>`).join('');
-  s += L.portas.map((p, i) => { const [x, y, w, h] = portaBB(p); return `<rect class="hit-porta${on('porta', i)}" data-d="${i}" x="${x - 3}" y="${y - 3}" width="${w + 6}" height="${h + 6}"/>`; }).join('');
-  const a = ambSel();
-  if (a) {
-    const [cx, cy] = centro(a);
-    s += `<rect class="alca" data-alca="se" x="${a.x + a.w - 7}" y="${a.y + a.h - 7}" width="14" height="14" rx="3"/><circle class="alca" data-alca="rot" cx="${cx}" cy="${cy}" r="7"><title>Arraste para mover o texto</title></circle>`;
-  }
-  if (arrasto?.tipo === 'nova-parede') s += `<line class="prev-parede" x1="${arrasto.p0[0]}" y1="${arrasto.p0[1]}" x2="${arrasto.p1[0]}" y2="${arrasto.p1[1]}"/>`;
-  return s;
-}
-
-function seloTxt(a) {
-  const o = aulasDe(a);
-  if (!o) return null;
-  const t = estado.turno, d = lst(o, 'd');
-  if (t !== 'todos') {
-    const l = [...lst(o, t), ...d.map(c => `${c} (s/ turno)`)];
-    return l.length ? { txt: juntar(l) } : { txt: 'Livre', livre: true };
-  }
-  const m = lst(o, 'm'), tt = lst(o, 't'), n = lst(o, 'n'), p = [];
-  if (m.length && tt.length && juntar(m) === juntar(tt)) p.push(`M/T ${juntar(m)}`);
-  else { if (m.length) p.push(`M ${juntar(m)}`); if (tt.length) p.push(`T ${juntar(tt)}`); }
-  if (n.length) p.push(`N ${juntar(n)}`);
-  if (d.length) p.push(juntar(d));
-  return p.length ? { txt: p.join('  |  ') } : { txt: 'Livre', livre: true };
-}
-
-function estadosPlanta() {
-  const L = Lc(), tel = estado.modo === 'telao';
-  for (const a of L.ambientes) {
-    const g = base.querySelector(`.amb[data-id="${CSS.escape(a.id)}"]`), r = base.querySelector(`.r[data-r="${CSS.escape(a.id)}"]`);
-    const hl = !!estado.turma && usaTurma(a, estado.turma);
-    const dim = estado.modo === 'ver' && (estado.turma ? !hl : estado.turno !== 'todos' && !a.aulas && a.tipo !== 'piso');
-    const sel = estado.sel === a.id && (estado.modo !== 'editar' || estado.alvo?.tipo === 'amb');
-    for (const el of [g, r]) if (el) { el.classList.toggle('sel', sel); el.classList.toggle('hl', hl); el.classList.toggle('dim', dim); }
-    g?.setAttribute('aria-pressed', sel);
-    const s = r && $('.selo', r);
-    if (s) {
-      const o = seloTxt(a);
-      s.classList.toggle('livre', !!o.livre);
-      r.classList.toggle('agora', tel && !o.livre);
-      $('text', s).textContent = o.txt;
-      medir(s);
-    }
-  }
-  if (estado.modo === 'editar') {
-    $$('[data-m]', base).forEach(el => el.classList.toggle('on', estado.alvo?.tipo === 'marca' && estado.alvo.i === +el.dataset.m));
-    $$('[data-t]', base).forEach(el => el.classList.toggle('on', estado.alvo?.tipo === 'texto' && estado.alvo.i === +el.dataset.t));
-  }
-}
-function medir(selo) {
-  const t = $('text', selo), r = $('rect', selo);
-  if (!t.textContent || !t.getComputedTextLength) return;
-  const w = t.getComputedTextLength() + (estado.modo === 'telao' ? 26 : 20);
-  r.setAttribute('x', +selo.dataset.cx - w / 2);
-  r.setAttribute('width', w);
-}
-
-/* ---------- Painéis ---------- */
-function cabecalho() {
-  const L = Lc(), ed = estado.modo === 'editar';
-  $('#olho').innerHTML = ed
-    ? `<span class="tag-ed">Modo edição</span><a href="#${estado.local}">Ver como visitante</a>`
-    : 'Novo ambiente · croqui digitalizado';
-  $('#sub-geral').textContent = ed
-    ? 'Arraste, desenhe e preencha o quadro de aulas; depois publique para atualizar o link público.'
-    : 'Distribuição das salas e quadro de aulas · toque em um espaço para ver os detalhes';
-  $('#abas').innerHTML = Object.entries(dados.locais).map(([id, l]) =>
-    `<button type="button" class="aba" role="tab" id="aba-${id}" data-local="${id}" aria-controls="painel-planta" aria-selected="${id === estado.local}" tabindex="${id === estado.local ? 0 : -1}"><svg class="ic"><use href="#${l.icone || 'i-predio'}"/></svg><span><strong>${esc(l.nome)}</strong><small>${esc(l.aba)}</small></span></button>`).join('');
-  $('#titulo-local').textContent = L.titulo;
-  $('#sub-local').textContent = L.sub;
-  $('#dias').innerHTML = Object.keys(DIAS).map(d => `<button type="button" data-dia="${d}" aria-pressed="${d === estado.dia}" aria-label="${DIAS[d]}">${maiusc(d)}</button>`).join('');
-  $('#turnos').innerHTML = [['todos', 'Todos'], ...Object.entries(TURNOS).filter(([k]) => k !== 'd')].map(([k, v]) => `<button type="button" data-turno="${k}" aria-pressed="${k === estado.turno}">${v}</button>`).join('');
-  $('#b3d').setAttribute('aria-pressed', estado.d3);
-  $('#zmenos').disabled = estado.zoom === 0;
-  $('#zmais').disabled = estado.zoom === ZOOMS.length - 1;
-  palco.style.setProperty('--zoom', estado.modo === 'telao' ? 1 : ZOOMS[estado.zoom]);
-  $('#rodape-txt').textContent = `Atualizado em ${dataBr(dados.atualizado)} · planta sem escala · digitalizada a partir do croqui de 06/11/2026`;
-}
-
-function detalhe() {
-  const el = $('#detalhe'), L = Lc(), a = L.ambientes.find(x => x.id === estado.sel);
-  $('#det-titulo').textContent = 'Ambiente';
-  if (!a) {
-    const n = L.ambientes.filter(x => x.tipo !== 'piso').length, aloc = L.ambientes.filter(x => x.aulas).length;
-    el.innerHTML = `<p class="vazio"><svg class="ic"><use href="#i-toque"/></svg><span>Selecione um espaço na planta ou na legenda para ver nome, mobiliário, acessos e aulas.</span></p>
-      <p class="resumo-local"><strong>${esc(L.nome)}</strong> · ${n} ${n === 1 ? 'espaço' : 'espaços'} · ${aloc} no quadro de aulas</p>`;
-    return;
-  }
-  let aulas = '<span>Fora do quadro de aulas</span>';
-  if (a.aulas) {
-    const o = aulasDe(a), l = ['m', 't', 'n', 'd'].filter(k => lst(o, k).length).map(k => k === 'd'
-      ? `<span><b>${esc(juntar(o.d))}</b> · turno não indicado</span>`
-      : `<span><b>${TURNOS[k]}</b> ${esc(juntar(o[k]))}</span>`);
-    aulas = l.length ? l.join('') : '<span><b style="color:var(--verde-txt)">Livre</b></span>';
-  }
-  el.innerHTML = `<h4 class="det-nome">${esc(a.nome)}</h4>
-    <div class="chips"><span class="chip" style="--c:${CORES[a.cat]}"><i></i>${CAT[a.cat]}</span><span class="chip">${esc(L.nome)}</span></div>
-    <dl>
-      ${a.croqui ? `<dt>No croqui</dt><dd>“${esc(a.croqui)}”</dd>` : ''}
-      ${a.moveis ? `<dt>Mobiliário</dt><dd>${esc(a.moveis)}</dd>` : ''}
-      ${a.acesso ? `<dt>Acesso</dt><dd>${esc(a.acesso)}</dd>` : ''}
-      <dt>${DIAS[estado.dia].split('-')[0]}</dt><dd class="turnos">${aulas}</dd>
-      ${a.postit ? `<dt>Post-it</dt><dd><span class="postit" style="--p:${POSTIT[a.postit.cor] || '#ccc'}"><i></i>${esc(a.postit.texto)}</span></dd>` : ''}
-    </dl>
-    ${a.obs ? `<p class="obs">${esc(a.obs)}</p>` : ''}`;
-}
-
-const marcar = v => estado.turma ? esc(v).split(' · ').map(p => p === esc(estado.turma) ? `<mark>${p}</mark>` : p).join(' · ') : esc(v);
-function ocupacao() {
-  const codigos = [...new Set(todos().flatMap(({ a }) => { const o = aulasDe(a); return o ? ['m', 't', 'n', 'd'].flatMap(k => lst(o, k)) : []; }))]
-    .sort((x, y) => (parseInt(x.replace(/\D/g, '')) || 1e4) - (parseInt(y.replace(/\D/g, '')) || 1e4) || x.localeCompare(y));
-  if (estado.turma && !codigos.includes(estado.turma)) estado.turma = null;
-  $('#ocup-titulo').textContent = `Aulas · ${DIAS[estado.dia].toLowerCase()}`;
-  $('#turmas').innerHTML = codigos.map(c => `<button type="button" class="turma" data-turma="${esc(c)}" aria-pressed="${c === estado.turma}">${esc(c)}</button>`).join('');
-  const nota = $('#nota-dia');
-  nota.hidden = codigos.length > 0;
-  nota.textContent = `Nenhuma aula cadastrada para ${DIAS[estado.dia].toLowerCase()}.`;
-  const temNoite = todos().some(({ a }) => lst(aulasDe(a), 'n').length);
-  const cols = temNoite ? ['m', 't', 'n'] : ['m', 't'];
-  $('#tab-ocup thead').innerHTML = `<tr><th scope="col">Ambiente</th>${cols.map(k => `<th scope="col">${TURNOS[k]}</th>`).join('')}</tr>`;
-  $('#tab-ocup tbody').innerHTML = todos().filter(({ a }) => a.aulas).map(({ lid, L, a }) => {
-    const o = aulasDe(a), d = lst(o, 'd');
-    const cel = k => { const l = [...lst(o, k)]; return l.length ? `<td>${marcar(juntar(l))}</td>` : d.length ? '<td></td>' : '<td class="livre">Livre</td>'; };
-    const semTurno = d.length ? `<td colspan="${cols.length}">${marcar(juntar(d))}<span class="sem-turno">turno não indicado</span></td>` : '';
-    const corpo = d.length && !cols.some(k => lst(o, k).length) ? semTurno : cols.map(cel).join('');
-    const ir = `${lid}-${a.id}`;
-    return `<tr class="${lid === estado.local && a.id === estado.sel ? 'sel' : ''}"><th scope="row"><button type="button" data-ir="${esc(ir)}"><strong>${esc(a.nome)}</strong><small>${esc(L.nome)}</small></button></th>${corpo}</tr>`;
-  }).join('');
-  const ul = $('#onde');
-  ul.innerHTML = !estado.turma ? '' : todos().filter(({ a }) => usaTurma(a, estado.turma)).flatMap(({ lid, L, a }) =>
-    ['m', 't', 'n', 'd'].filter(k => lst(aulasDe(a), k).includes(estado.turma)).map(k =>
-      `<li>${k === 'd' ? 'Turno não indicado' : TURNOS[k]}: <button type="button" data-ir="${esc(lid + '-' + a.id)}">${esc(a.nome)}</button> · ${esc(L.nome)}</li>`)).join('');
-}
-
-function legenda() {
-  const L = Lc();
-  const itens = c => L.ambientes.filter(a => a.cat === c && a.tipo !== 'piso');
-  $('#legenda').innerHTML = Object.keys(CAT).map(c => {
-    const l = itens(c);
-    if (!l.length) return '';
-    return `<li class="cat-${c}"><div class="leg-cab"><i></i>${CAT[c]}<small>${l.length}</small></div>
-      <div class="leg-itens">${l.map(a => `<button type="button" data-sel="${esc(a.id)}" aria-pressed="${a.id === estado.sel}">${esc(a.nome)}</button>`).join('')}</div></li>`;
-  }).join('');
-  $('#tr-leg').innerHTML = Object.keys(CAT).filter(c => itens(c).length).map(c => `<span class="cat-${c}"><i></i>${CAT[c]}</span>`).join('');
-}
-
-/* ---------- Telão ---------- */
-function relogio() {
-  const d = new Date(), ag = agora();
-  $('#tt-hora').textContent = d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-  $('#tt-data').textContent = maiusc(d.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' }));
-  $('#tt-agora').textContent = estado.auto
-    ? (ag.fimDeSemana ? `Fim de semana · próxima: segunda, ${TURNOS.m.toLowerCase()}` : `Agora · ${TURNOS[estado.turno]}`)
-    : `Exibindo · ${DIAS[estado.dia].split('-')[0]}, ${TURNOS[estado.turno].toLowerCase()}`;
-}
-function telao() {
-  const L = Lc();
-  $('#tt-local').textContent = L.nome;
-  $('#tc-sair').href = `#${estado.local}`;
-  relogio();
-  const grupos = Object.entries(dados.locais).map(([lid, l]) => ({
-    lid, l, itens: l.ambientes.filter(a => a.aulas).map(a => { const o = aulasDe(a); return { a, c: [...lst(o, estado.turno), ...lst(o, 'd')] }; }).filter(x => x.c.length),
-  })).filter(g => g.itens.length);
-  $('#telao-lado').innerHTML = `<h2>Aulas · <b>${TURNOS[estado.turno]}</b></h2>` + (grupos.length
-    ? grupos.map(g => `<section class="tl-grupo${g.lid === estado.local ? ' atual' : ''}"><h3>${esc(g.l.nome)}</h3><ul>${g.itens.map(i => `<li><span>${esc(i.a.nome)}</span><b>${esc(juntar(i.c))}</b></li>`).join('')}</ul></section>`).join('')
-    : `<p class="tl-vazio">Nenhuma aula cadastrada para ${DIAS[estado.dia].toLowerCase()}, ${TURNOS[estado.turno].toLowerCase()}.</p>`);
-  $('#tr-locais').innerHTML = Object.entries(dados.locais).map(([id, l]) => `<button type="button" data-local="${id}" aria-current="${id === estado.local}">${esc(l.nome)}</button>`).join('');
-  document.body.style.setProperty('--giro', GIRO_MS / 1000 + 's');
-  document.body.classList.toggle('parado', !estado.girar);
-  $('#tc-girar').setAttribute('aria-pressed', estado.girar);
-  $('#tc-3d').setAttribute('aria-pressed', estado.d3);
-  $('#tc-turno').innerHTML = `<option value="auto"${estado.auto ? ' selected' : ''}>Horário atual</option>` + ['m', 't', 'n'].map(k => `<option value="${k}"${!estado.auto && estado.turno === k ? ' selected' : ''}>${TURNOS[k]}</option>`).join('');
-  $('#tc-dia').innerHTML = Object.entries(DIAS).map(([k, v]) => `<option value="${k}"${k === estado.dia ? ' selected' : ''}>${v}</option>`).join('');
-  $('#tc-dia').disabled = estado.auto;
-  $('#tc-cheia').lastChild.textContent = document.fullscreenElement ? 'Sair da tela cheia' : 'Tela cheia';
-}
-function proximoLocal(passo = 1) {
-  const ids = Object.keys(dados.locais), i = ids.indexOf(estado.local);
-  estado.local = ids[(i + passo + ids.length) % ids.length];
-  render();
-}
-function reiniciarGiro() {
-  clearInterval(giro);
-  if (estado.modo === 'telao' && estado.girar) giro = setInterval(() => proximoLocal(1), GIRO_MS);
-}
-function acordar() {
-  document.body.classList.remove('ocioso');
-  clearTimeout(ocioso);
-  if (estado.modo === 'telao') ocioso = setTimeout(() => document.body.classList.add('ocioso'), 3500);
-}
-
-/* ---------- Editor: seleção e formulários ---------- */
-const ambSel = () => estado.alvo?.tipo === 'amb' ? Lc().ambientes.find(a => a.id === estado.alvo.id) : null;
-function selecionarAlvo(alvo) {
-  estado.alvo = alvo;
-  estado.sel = alvo?.tipo === 'amb' ? alvo.id : null;
-}
-function inspetor() {
-  const el = $('#detalhe'), L = Lc(), al = estado.alvo;
-  const input = (c, rot, v, extra = '') => `<div class="campo"><label for="f-${c}">${rot}</label><input id="f-${c}" data-c="${c}" value="${esc(v)}" ${extra}></div>`;
-  const numero = (c, rot, v) => input(c, rot, v ?? '', 'type="number" step="1" inputmode="numeric"');
-  const area = (c, rot, v, linhas = 2) => `<div class="campo"><label for="f-${c}">${rot}</label><textarea id="f-${c}" data-c="${c}" rows="${linhas}">${esc(v)}</textarea></div>`;
-  const select = (c, rot, opcoes, v) => `<div class="campo"><label for="f-${c}">${rot}</label><select id="f-${c}" data-c="${c}">${Object.entries(opcoes).map(([k, t]) => `<option value="${k}"${String(k) === String(v) ? ' selected' : ''}>${esc(t)}</option>`).join('')}</select></div>`;
-  const check = (c, rot, v) => `<label class="check"><input type="checkbox" id="f-${c}" data-c="${c}"${v ? ' checked' : ''}>${rot}</label>`;
-  const excluir = rot => `<div class="botoes"><button type="button" class="btn btn-perigo" data-acao="excluir">${rot}</button></div>`;
-  if (!al) {
-    $('#det-titulo').textContent = 'Editar local';
-    el.innerHTML = `<div class="form">
-      ${input('l-nome', 'Nome da aba', L.nome)}${input('l-aba', 'Descrição da aba', L.aba)}
-      ${input('l-titulo', 'Título da planta', L.titulo)}${area('l-sub', 'Subtítulo da planta', L.sub)}
-      <div class="campo"><label for="f-foto">Foto do croqui <small>(substitui a atual ao publicar)</small></label><input type="file" id="f-foto" accept="image/*"></div>
-      <hr><div class="ajuda"><strong>Como editar</strong><ul>
-        <li>Clique num espaço para editar nome, tipo e aulas; arraste para mover e use o quadrado laranja para redimensionar.</li>
-        <li><strong>Parede</strong>: arraste para desenhar. <strong>Porta</strong>: clique sobre uma parede.</li>
-        <li>Setas movem o item selecionado (Shift = 1 unidade); Delete exclui; Ctrl+Z desfaz.</li>
-        <li>O quadro de aulas da semana fica abaixo da planta.</li></ul></div></div>`;
-    return;
-  }
-  if (al.tipo === 'amb') {
-    const a = ambSel();
-    if (!a) { selecionarAlvo(null); return inspetor(); }
-    $('#det-titulo').textContent = 'Editar espaço';
-    const o = a.aulas ? aulasDe(a) : null;
-    el.innerHTML = `<div class="form">
-      ${input('nome', 'Nome', a.nome)}
-      ${area('rot', 'Texto na planta <small>(uma linha por linha; vazio = sem texto)</small>', (a.rot ?? [a.nome]).join('\n'))}
-      <div class="lin2">${input('sub', 'Subtítulo', a.sub ?? '')}${numero('tam', 'Tamanho do texto', a.tam ?? 15)}</div>
-      <div class="lin2">${select('cat', 'Categoria', CAT, a.cat)}${select('tipo', 'Tipo', TIPOS, a.tipo || 'sala')}</div>
-      <div class="lin4">${numero('x', 'X', a.x)}${numero('y', 'Y', a.y)}${numero('w', 'Largura', a.w)}${numero('h', 'Altura', a.h)}</div>
-      <div class="lin2">${numero('rx', 'Cantos', a.rx ?? 0)}<div class="campo"><span class="rotulo">Forma</span>${check('elipse', 'Oval', a.forma === 'elipse')}${check('giro', 'Texto na vertical', !!a.giro)}</div></div>
-      <div class="botoes"><button type="button" class="btn" data-acao="centralizar">Centralizar texto</button><button type="button" class="btn" data-acao="contorno">Criar paredes no contorno</button><button type="button" class="btn" data-acao="duplicar">Duplicar</button></div>
-      <hr><h4>Quadro de aulas · ${DIAS[estado.dia].toLowerCase()}</h4>
-      ${check('aloc', 'Este espaço recebe aulas', !!a.aulas)}
-      ${o ? `<div class="lin2">${input('aula-m', 'Manhã', lst(o, 'm').join(', '))}${input('aula-t', 'Tarde', lst(o, 't').join(', '))}</div>
-        <div class="lin2">${input('aula-n', 'Noite', lst(o, 'n').join(', '))}${input('aula-d', 'Sem turno', lst(o, 'd').join(', '))}</div>
-        <p class="ajuda">Separe várias turmas por vírgula. Troque o dia nos botões acima da planta.</p>` : ''}
-      <hr><h4>Informações</h4>
-      ${input('croqui', 'Texto no croqui', a.croqui ?? '')}${input('moveis', 'Mobiliário', a.moveis ?? '')}${input('acesso', 'Acesso', a.acesso ?? '')}
-      ${area('obs', 'Observação', a.obs ?? '')}
-      <div class="lin2">${select('postit-cor', 'Post-it', { '': 'Nenhum', ...POSTIT_NOME }, a.postit?.cor ?? '')}${a.postit ? input('postit-texto', 'Texto do post-it', a.postit.texto) : ''}</div>
-      ${excluir('Excluir espaço')}</div>`;
-    return;
-  }
-  if (al.tipo === 'parede') {
-    const p = L.paredes[al.i];
-    $('#det-titulo').textContent = 'Editar parede';
-    el.innerHTML = `<div class="form">${select('p-ext', 'Tipo', { 0: 'Interna (fina)', 1: 'Externa (grossa)' }, p[4] ? 1 : 0)}
-      <div class="lin4">${numero('p0', 'X inicial', p[0])}${numero('p1', 'Y inicial', p[1])}${numero('p2', 'X final', p[2])}${numero('p3', 'Y final', p[3])}</div>
-      <p class="ajuda">Comprimento: ${Math.round(Math.hypot(p[2] - p[0], p[3] - p[1]))} unidades. Arraste a parede para movê-la (as portas sobre ela vão junto).</p>${excluir('Excluir parede')}</div>`;
-    return;
-  }
-  if (al.tipo === 'porta') {
-    const p = L.portas[al.i], h = p.o === 'h';
-    $('#det-titulo').textContent = 'Editar porta';
-    el.innerHTML = `<div class="form">${numero('d-w', 'Largura', p.w)}
-      ${select('d-lado', 'Abre para', h ? { 1: 'Baixo', '-1': 'Cima' } : { 1: 'Direita', '-1': 'Esquerda' }, p.lado)}
-      ${select('d-inv', 'Dobradiça', h ? { 0: 'Lado esquerdo', 1: 'Lado direito' } : { 0: 'Em cima', 1: 'Embaixo' }, p.inv ? 1 : 0)}
-      <p class="ajuda">Arraste a porta para deslizá-la ao longo da parede.</p>${excluir('Excluir porta')}</div>`;
-    return;
-  }
-  if (al.tipo === 'marca') {
-    $('#det-titulo').textContent = 'Editar indicação de acesso';
-    el.innerHTML = `<div class="form">${input('m-t', 'Texto', L.marcas[al.i].t)}<p class="ajuda">Arraste a indicação na planta para movê-la.</p>${excluir('Excluir indicação')}</div>`;
-    return;
-  }
-  if (al.tipo === 'texto') {
-    const t = L.textos[al.i];
-    $('#det-titulo').textContent = 'Editar texto';
-    el.innerHTML = `<div class="form">${input('t-t', 'Texto', t.t)}${check('t-nota', 'Estilo de nota (itálico)', !!t.nota)}<p class="ajuda">Arraste o texto na planta para movê-lo.</p>${excluir('Excluir texto')}</div>`;
-  }
-}
-
-function setAulas(a, dia, turno, texto) {
-  a.aulas = a.aulas || {};
-  const o = a.aulas[dia] = a.aulas[dia] || {};
-  const l = texto.split(/[,;\n]+/).map(s => s.trim()).filter(Boolean);
-  if (l.length) o[turno] = l; else delete o[turno];
-  if (!Object.keys(o).length) delete a.aulas[dia];
-}
-const REDESENHA_FORM = new Set(['aloc', 'postit-cor', 'tipo', 'elipse', 'giro', 'p-ext']);
-function aplicarCampo(el) {
-  const c = el.dataset.c, v = el.type === 'checkbox' ? el.checked : el.value, L = Lc(), al = estado.alvo;
-  if (!al) { const k = c.slice(2); if (k) L[k] = v; return; }
-  if (al.tipo === 'amb') {
-    const a = ambSel();
-    if (!a) return;
-    if (c.startsWith('aula-')) return setAulas(a, estado.dia, c.slice(5), v);
-    switch (c) {
-      case 'rot': a.rot = v.split('\n').map(s => s.trim()).filter(Boolean); if (a.rot.length === 1 && a.rot[0] === a.nome) delete a.rot; break;
-      case 'x': case 'y': a[c] = num(v); break;
-      case 'w': case 'h': a[c] = Math.max(4, num(v)); break;
-      case 'tam': case 'rx': a[c] = Math.max(0, num(v)); break;
-      case 'elipse': if (v) a.forma = 'elipse'; else delete a.forma; break;
-      case 'giro': if (v) a.giro = -90; else delete a.giro; break;
-      case 'aloc': if (v) a.aulas = a.aulas || {}; else delete a.aulas; break;
-      case 'postit-cor': if (v) a.postit = { cor: v, texto: a.postit?.texto || '' }; else delete a.postit; break;
-      case 'postit-texto': if (a.postit) a.postit.texto = v; break;
-      default: if (v || c === 'nome') a[c] = v; else delete a[c];
-    }
-    return;
-  }
-  if (al.tipo === 'parede') { const p = L.paredes[al.i]; if (c === 'p-ext') p[4] = +v; else p[+c[1]] = num(v); return; }
-  if (al.tipo === 'porta') { const p = L.portas[al.i]; if (c === 'd-w') p.w = Math.max(6, num(v)); if (c === 'd-lado') p.lado = +v; if (c === 'd-inv') { if (+v) p.inv = true; else delete p.inv; } return; }
-  if (al.tipo === 'marca' && c === 'm-t') L.marcas[al.i].t = v;
-  if (al.tipo === 'texto') { const t = L.textos[al.i]; if (c === 't-t') t.t = v; if (c === 't-nota') { if (v) t.nota = true; else delete t.nota; } }
-}
-
-function acaoInspetor(acao) {
-  const L = Lc(), al = estado.alvo, antes = JSON.stringify(dados);
-  if (acao === 'excluir') {
-    if (al.tipo === 'amb') L.ambientes = L.ambientes.filter(a => a.id !== al.id);
-    else ({ parede: L.paredes, porta: L.portas, marca: L.marcas, texto: L.textos })[al.tipo].splice(al.i, 1);
-    selecionarAlvo(null);
-  } else {
-    const a = ambSel();
-    if (!a) return;
-    if (acao === 'centralizar') { delete a.lx; delete a.ly; }
-    if (acao === 'contorno') {
-      const { x, y, w, h } = a;
-      L.paredes.push([x, y, x + w, y, 0], [x + w, y, x + w, y + h, 0], [x + w, y + h, x, y + h, 0], [x, y + h, x, y, 0]);
-    }
-    if (acao === 'duplicar') {
-      const b = JSON.parse(JSON.stringify(a));
-      b.id = novoId(); b.nome = `${a.nome} (cópia)`; delete b.rot; b.x += 20; b.y += 20;
-      L.ambientes.push(b);
-      selecionarAlvo({ tipo: 'amb', id: b.id });
-    }
-  }
-  registrar(antes);
-  render();
-}
-const novoId = () => 'e' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
-
-function adicionar(tipo) {
-  const L = Lc(), antes = JSON.stringify(dados), vb = estado.vb || limites(L);
-  const cx = sn(vb[0] + vb[2] / 2), cy = sn(vb[1] + vb[3] / 2);
-  if (tipo === 'texto') { L.textos.push({ t: 'TEXTO', x: cx, y: cy }); selecionarAlvo({ tipo: 'texto', i: L.textos.length - 1 }); }
-  else {
-    const a = { id: novoId(), nome: tipo === 'zona' ? 'Nova zona' : 'Nova sala', cat: 'ensino', tipo, x: cx - 70, y: cy - 50, w: 140, h: 100, ...(tipo === 'zona' && { rx: 12 }) };
-    L.ambientes.push(a);
-    selecionarAlvo({ tipo: 'amb', id: a.id });
-  }
-  registrar(antes);
-  render();
-  $('#f-nome, #f-t-t')?.select();
-}
-
-/* ---------- Editor: arrastar na planta ---------- */
-function pontoSVG(e) { const p = new DOMPoint(e.clientX, e.clientY).matrixTransform(base.getScreenCTM().inverse()); return [p.x, p.y]; }
-function paredeProxima(px, py) {
-  let melhor = null;
-  Lc().paredes.forEach(([x1, y1, x2, y2], i) => {
-    const h = Math.abs(y1 - y2) < .5, v = Math.abs(x1 - x2) < .5;
-    if (!h && !v) return;
-    const fora = h ? px < Math.min(x1, x2) || px > Math.max(x1, x2) : py < Math.min(y1, y2) || py > Math.max(y1, y2);
-    const d = fora ? Infinity : Math.abs(h ? py - y1 : px - x1);
-    if (d <= 12 && (!melhor || d < melhor.d)) melhor = { i, d, h };
-  });
-  return melhor;
-}
-function portasNaParede(p) {
-  const h = Math.abs(p[1] - p[3]) < .5;
-  return Lc().portas.map((d, i) => ({ d, i })).filter(({ d }) => (d.o === 'h') === h && Math.abs((h ? d.y : d.x) - (h ? p[1] : p[0])) <= 4
-    && (h ? d.x >= Math.min(p[0], p[2]) - 1 && d.x <= Math.max(p[0], p[2]) : d.y >= Math.min(p[1], p[3]) - 1 && d.y <= Math.max(p[1], p[3]))).map(({ i }) => i);
-}
-
-base.addEventListener('pointerdown', e => {
-  if (estado.modo !== 'editar' || e.button !== 0) return;
-  const [px, py] = pontoSVG(e), L = Lc(), t = e.target, ini = { px, py, antes: JSON.stringify(dados) };
-  if (estado.ferramenta === 'parede') {
-    arrasto = { ...ini, tipo: 'nova-parede', p0: [sn(px), sn(py)], p1: [sn(px), sn(py)] };
-  } else if (estado.ferramenta === 'porta') {
-    const pr = paredeProxima(px, py);
-    if (!pr) { dica('Clique sobre uma parede para inserir a porta.'); return; }
-    const [x1, y1, x2, y2] = L.paredes[pr.i], w = 30;
-    const ini2 = Math.round(Math.min(Math.max((pr.h ? px : py) - w / 2, Math.min(pr.h ? x1 : y1, pr.h ? x2 : y2)), Math.max(pr.h ? x1 : y1, pr.h ? x2 : y2) - w));
-    L.portas.push(pr.h ? { x: ini2, y: y1, o: 'h', w, lado: 1 } : { x: x1, y: ini2, o: 'v', w, lado: 1 });
-    selecionarAlvo({ tipo: 'porta', i: L.portas.length - 1 });
-    registrar(ini.antes);
-    render();
-    return;
-  } else {
-    const al = t.closest('[data-alca]'), hd = t.closest('[data-d]'), hm = t.closest('[data-m]'), ht = t.closest('[data-t]'), hp = t.closest('[data-p]'), am = t.closest('.amb');
-    if (al) arrasto = { ...ini, tipo: al.dataset.alca, o: { ...ambSel() } };
-    else if (hd) { selecionarAlvo({ tipo: 'porta', i: +hd.dataset.d }); arrasto = { ...ini, tipo: 'porta', o: { ...L.portas[+hd.dataset.d] } }; }
-    else if (hm) { selecionarAlvo({ tipo: 'marca', i: +hm.dataset.m }); arrasto = { ...ini, tipo: 'marca', o: JSON.parse(JSON.stringify(L.marcas[+hm.dataset.m])) }; }
-    else if (ht) { selecionarAlvo({ tipo: 'texto', i: +ht.dataset.t }); arrasto = { ...ini, tipo: 'texto', o: { ...L.textos[+ht.dataset.t] } }; }
-    else if (hp) { const i = +hp.dataset.p; selecionarAlvo({ tipo: 'parede', i }); arrasto = { ...ini, tipo: 'parede', o: [...L.paredes[i]], portas: portasNaParede(L.paredes[i]).map(j => ({ j, x: L.portas[j].x, y: L.portas[j].y })) }; }
-    else if (am) { selecionarAlvo({ tipo: 'amb', id: am.dataset.id }); arrasto = { ...ini, tipo: 'amb', o: { ...ambSel() } }; }
-    else { selecionarAlvo(null); render(); return; }
-    inspetor();
-  }
-  vbFixo = estado.vb;
-  try { base.setPointerCapture(e.pointerId); } catch {}
-  e.preventDefault();
-  desenhar();
-});
-base.addEventListener('pointermove', e => {
-  if (!arrasto) return;
-  const [px, py] = pontoSVG(e), dx = sn(px - arrasto.px), dy = sn(py - arrasto.py), L = Lc(), o = arrasto.o, al = estado.alvo;
-  switch (arrasto.tipo) {
-    case 'nova-parede': { const [x0, y0] = arrasto.p0, X = sn(px), Y = sn(py); arrasto.p1 = Math.abs(X - x0) >= Math.abs(Y - y0) ? [X, y0] : [x0, Y]; dica(`Parede: ${Math.round(Math.hypot(arrasto.p1[0] - x0, arrasto.p1[1] - y0))} unidades`); break; }
-    case 'amb': { const a = ambSel(); a.x = o.x + dx; a.y = o.y + dy; dica(`${a.nome}: x ${a.x} · y ${a.y}`); break; }
-    case 'se': { const a = ambSel(); a.w = Math.max(10, o.w + dx); a.h = Math.max(10, o.h + dy); dica(`${a.nome}: ${a.w} × ${a.h}`); break; }
-    case 'rot': { const a = ambSel(); a.lx = Math.round((o.lx ?? o.w / 2) + px - arrasto.px); a.ly = Math.round((o.ly ?? o.h / 2) + py - arrasto.py); break; }
-    case 'porta': { const p = L.portas[al.i]; if (p.o === 'h') p.x = Math.round(o.x + px - arrasto.px); else p.y = Math.round(o.y + py - arrasto.py); break; }
-    case 'parede': { const p = L.paredes[al.i]; p[0] = o[0] + dx; p[1] = o[1] + dy; p[2] = o[2] + dx; p[3] = o[3] + dy; arrasto.portas.forEach(({ j, x, y }) => { L.portas[j].x = x + dx; L.portas[j].y = y + dy; }); break; }
-    case 'marca': { const m = L.marcas[al.i]; m.x = o.x + dx; m.y = o.y + dy; m.seta = o.seta.map((v, i) => v + (i % 2 ? dy : dx)); break; }
-    case 'texto': { const t = L.textos[al.i]; t.x = o.x + dx; t.y = o.y + dy; break; }
-  }
-  desenhar();
-});
-function soltar() {
-  if (!arrasto) return;
-  const ar = arrasto;
-  arrasto = null;
-  vbFixo = null;
-  if (ar.tipo === 'nova-parede') {
-    const [x0, y0] = ar.p0, [x1, y1] = ar.p1;
-    if (Math.hypot(x1 - x0, y1 - y0) >= 10) { Lc().paredes.push([x0, y0, x1, y1, estado.paredeExt]); selecionarAlvo({ tipo: 'parede', i: Lc().paredes.length - 1 }); }
-  }
-  if (JSON.stringify(dados) !== ar.antes) registrar(ar.antes);
-  render();
-}
-base.addEventListener('pointerup', soltar);
-base.addEventListener('pointercancel', soltar);
-
-/* ---------- Editor: desfazer, rascunho, publicação ---------- */
-function registrar(antes) {
-  desfazer.push(antes);
-  if (desfazer.length > 100) desfazer.shift();
-  refazer.length = 0;
-  salvarRascunho();
-}
-function voltar(de, para) {
-  if (!de.length) return;
-  para.push(JSON.stringify(dados));
-  dados = JSON.parse(de.pop());
-  if (!dados.locais[estado.local]) estado.local = Object.keys(dados.locais)[0];
-  const al = estado.alvo, L = Lc();
-  if (al && (al.tipo === 'amb' ? !L.ambientes.some(a => a.id === al.id) : !({ parede: L.paredes, porta: L.portas, marca: L.marcas, texto: L.textos })[al.tipo][al.i])) selecionarAlvo(null);
-  salvarRascunho();
-  render();
-}
-const sujo = () => JSON.stringify(dados) !== publicado || Object.keys(fotosNovas).length > 0;
-function salvarRascunho() { try { localStorage.setItem('planta-rascunho', JSON.stringify({ dados, quando: new Date().toISOString() })); } catch {} }
-function lerRascunho() { try { return JSON.parse(localStorage.getItem('planta-rascunho')); } catch { return null; } }
-function limparRascunho() { try { localStorage.removeItem('planta-rascunho'); } catch {} }
-function lerToken() { try { return localStorage.getItem('planta-token-github') || ''; } catch { return ''; } }
-function dica(t) { $('#ed-dica').textContent = t; }
-function msgPub(t, erro = false) { const m = $('#pub-msg'); m.textContent = t; m.classList.toggle('erro', erro); }
-
-function painelEditor() {
-  $$('#ferr button').forEach(b => b.setAttribute('aria-pressed', b.dataset.ferr === estado.ferramenta));
-  $('#tipo-parede').hidden = estado.ferramenta !== 'parede';
-  $$('#tipo-parede button').forEach(b => b.setAttribute('aria-pressed', +b.dataset.ext === estado.paredeExt));
-  document.body.classList.toggle('ferr-parede', estado.ferramenta === 'parede');
-  document.body.classList.toggle('ferr-porta', estado.ferramenta === 'porta');
-  $('#b-desfazer').disabled = !desfazer.length;
-  $('#b-refazer').disabled = !refazer.length;
-  if (!arrasto) dica({ sel: 'Clique para selecionar · arraste para mover', parede: 'Arraste para desenhar uma parede reta', porta: 'Clique sobre uma parede para inserir uma porta' }[estado.ferramenta]);
-  const s = sujo(), est = $('#pub-estado');
-  est.classList.toggle('sujo', s);
-  $('span', est).textContent = s ? 'Há alterações não publicadas' : `Tudo publicado · ${dataBr(dados.atualizado)}`;
-  $('#b-publicar').disabled = !s;
-  $('#b-descartar').disabled = !s;
-  const tk = lerToken();
-  $('#pub-token').innerHTML = tk
-    ? `<p class="ajuda">Publicando em <strong>${CONFIG.dono}/${CONFIG.repo}</strong> com o token salvo neste navegador. <button type="button" class="ir" id="b-sem-token">Remover token</button></p>`
-    : `<div class="form"><div class="campo"><label for="f-token">Token do GitHub</label><input id="f-token" type="password" autocomplete="off" spellcheck="false" placeholder="github_pat_…"></div>
-       <p class="ajuda">Crie um token <em>fine-grained</em> com acesso só ao repositório <strong>${CONFIG.repo}</strong> e permissão <em>Contents: Read and write</em>. <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">Criar token</a>. Ele fica guardado apenas neste navegador.</p>
-       <div class="botoes"><button type="button" class="btn" id="b-token">Salvar token</button></div></div>`;
-  const r = lerRascunho(), faixa = $('#ed-rascunho');
-  const temRascunho = r && JSON.stringify(r.dados) !== publicado && JSON.stringify(r.dados) !== JSON.stringify(dados);
-  faixa.hidden = !temRascunho;
-  if (temRascunho) faixa.innerHTML = `<span>Há alterações não publicadas guardadas neste navegador (${dataBr(r.quando)}).</span><button type="button" class="btn" id="b-retomar">Retomar</button><button type="button" class="btn btn-perigo" id="b-descartar-rascunho">Descartar rascunho</button>`;
-}
-
-function quadro() {
-  $('#quadro-dias').innerHTML = Object.keys(DIAS).map(d => `<button type="button" data-dia="${d}" aria-pressed="${d === estado.dia}" aria-label="${DIAS[d]}">${maiusc(d)}</button>`).join('');
-  $('#quadro-destino').innerHTML = `<option value="todos">todos os dias</option>` + Object.entries(DIAS).filter(([k]) => k !== estado.dia).map(([k, v]) => `<option value="${k}">${v.toLowerCase()}</option>`).join('');
-  $('#tab-quadro tbody').innerHTML = todos().filter(({ a }) => a.aulas).map(({ lid, L, a }) => {
-    const o = aulasDe(a), chave = `${lid}|${a.id}`;
-    return `<tr><th scope="row"><button type="button" data-ed="${esc(chave)}"><strong>${esc(a.nome)}</strong><small>${esc(L.nome)}</small></button></th>`
-      + ['m', 't', 'n', 'd'].map(k => `<td><input id="q-${esc(lid)}-${esc(a.id)}-${k}" data-q="${esc(chave)}|${k}" value="${esc(lst(o, k).join(', '))}" aria-label="${esc(a.nome)}, ${TURNOS[k]}" placeholder="Livre"></td>`).join('')
-      + `<td><button type="button" class="btn btn-perigo" data-rem="${esc(chave)}" aria-label="Tirar ${esc(a.nome)} do quadro"><svg class="ic"><use href="#i-fechar"/></svg></button></td></tr>`;
-  }).join('');
-  $('#quadro-add').innerHTML = todos().filter(({ a }) => !a.aulas && a.tipo !== 'piso').map(({ lid, L, a }) => `<option value="${esc(lid + '|' + a.id)}">${esc(a.nome)} · ${esc(L.nome)}</option>`).join('') || '<option value="">Todos os espaços já estão no quadro</option>';
-}
-const doQuadro = chave => { const [lid, id] = chave.split('|'); return dados.locais[lid]?.ambientes.find(a => a.id === id); };
-
-function b64(s) { const by = new TextEncoder().encode(s); let bin = ''; for (let i = 0; i < by.length; i += 0x8000) bin += String.fromCharCode(...by.subarray(i, i + 0x8000)); return btoa(bin); }
-const apiUrl = caminho => `https://api.github.com/repos/${CONFIG.dono}/${CONFIG.repo}/contents/${caminho}`;
-const cab = token => ({ Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' });
-async function shaRemoto(caminho, token) {
-  const r = await fetch(`${apiUrl(caminho)}?ref=${CONFIG.ramo}`, { headers: cab(token), cache: 'no-store' });
-  if (r.status === 404) return null;
-  const j = await r.json().catch(() => ({}));
-  if (!r.ok) throw { status: r.status, message: j.message };
-  return j.sha;
-}
-async function enviar(caminho, conteudo64, token, mensagem, sha) {
-  if (sha === undefined) sha = await shaRemoto(caminho, token);
-  const r = await fetch(apiUrl(caminho), { method: 'PUT', headers: cab(token), body: JSON.stringify({ message: mensagem, content: conteudo64, branch: CONFIG.ramo, ...(sha && { sha }) }) });
-  const j = await r.json().catch(() => ({}));
-  if (!r.ok) throw { status: r.status, message: j.message };
-  return j;
-}
-function erroGitHub(e) {
-  if (e instanceof TypeError) return 'Sem conexão com o GitHub. Verifique a internet e tente de novo.';
-  return ({
-    401: 'Token inválido ou expirado. Remova o token, gere outro no GitHub e cole aqui.',
-    403: 'O token não tem permissão de escrita neste repositório. Ele precisa de “Contents: Read and write”.',
-    404: `Repositório ${CONFIG.dono}/${CONFIG.repo} não encontrado para este token. Confira o acesso do token.`,
-    409: 'O arquivo mudou durante a publicação. Recarregue a página e tente de novo.',
-    422: 'O GitHub recusou a gravação porque o arquivo mudou. Recarregue a página e tente de novo.',
-  })[e.status] || `Não foi possível publicar (${e.status || 'erro'}): ${e.message || 'tente de novo em instantes.'}`;
-}
-const textoDados = () => `window.DADOS = ${JSON.stringify(dados, null, 1)};\n`;
-async function publicar(forcar = false) {
-  const token = lerToken();
-  if (!token) { msgPub('Cole um token do GitHub acima para publicar.', true); $('#f-token')?.focus(); return; }
-  const b = $('#b-publicar');
-  b.disabled = true;
-  msgPub('Publicando…');
-  try {
-    const atual = await shaRemoto(CONFIG.arquivo, token);
-    if (shaBase && atual !== shaBase && !forcar) {
-      $('#pub-msg').innerHTML = 'O site foi alterado em outro lugar desde que você abriu o editor. Publicar agora substitui aquela versão. <button type="button" class="ir" id="b-forcar">Publicar mesmo assim</button>';
-      b.disabled = false;
-      return;
-    }
-    for (const [lid, url] of Object.entries(fotosNovas)) {
-      const L = dados.locais[lid];
-      await enviar(L.foto, url.split(',')[1], token, `Atualiza foto do croqui: ${L.nome}`);
-      delete fotosNovas[lid];
-    }
-    dados.atualizado = new Date().toISOString();
-    const r = await enviar(CONFIG.arquivo, b64(textoDados()), token, `Atualiza planta e quadro de aulas (${new Date().toLocaleString('pt-BR')})`, atual);
-    shaBase = r.content?.sha || null;
-    publicado = JSON.stringify(dados);
-    limparRascunho();
-    msgPub('Publicado. O link público mostra a nova versão em cerca de 1 minuto.');
-  } catch (e) {
-    msgPub(erroGitHub(e), true);
-  }
-  painelEditor();
-}
-function baixar() {
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([textoDados()], { type: 'text/javascript' }));
-  a.download = 'dados.js';
-  a.click();
-  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-  msgPub('Arquivo baixado. Para publicar sem token, envie o dados.js para o repositório pelo GitHub (Add file › Upload files).');
-}
-async function trocarFoto(arquivo) {
-  try {
-    const img = await createImageBitmap(arquivo), k = Math.min(1, 1400 / Math.max(img.width, img.height));
-    const cv = document.createElement('canvas');
-    cv.width = Math.round(img.width * k); cv.height = Math.round(img.height * k);
-    cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
-    fotosNovas[estado.local] = cv.toDataURL('image/jpeg', .76);
-    msgPub('Foto nova pronta. Ela vai para o site quando você publicar.');
-  } catch { msgPub('Não foi possível ler essa imagem. Use uma foto JPG ou PNG.', true); }
-  painelEditor();
-}
-
-/* ---------- Render geral e navegação ---------- */
-function chaveFoco() {
-  const a = document.activeElement;
-  if (!a || a === document.body) return null;
-  for (const k of ['turma', 'ir', 'sel', 'dia', 'turno', 'local', 'ed']) if (a.dataset?.[k] !== undefined) return `[data-${k}="${CSS.escape(a.dataset[k])}"]`;
-  return a.id ? '#' + CSS.escape(a.id) : null;
-}
-function render({ manterInspetor = false, manterQuadro = false } = {}) {
-  const foco = chaveFoco(), m = estado.modo;
-  document.body.classList.remove('modo-ver', 'modo-editar', 'modo-telao');
-  document.body.classList.add(`modo-${m}`);
-  $$('[data-modo]').forEach(el => { el.hidden = !el.dataset.modo.split(' ').includes(m); });
-  vista.classList.toggle('is-3d', estado.d3);
-  cabecalho();
-  desenhar();
-  legenda();
-  if (m === 'ver') { detalhe(); ocupacao(); }
-  if (m === 'editar') { if (!manterInspetor) inspetor(); painelEditor(); if (!manterQuadro) quadro(); }
-  if (m === 'telao') telao();
-  if (m === 'ver') history.replaceState(null, '', `#${estado.local}${estado.sel ? '-' + estado.sel : ''}`);
-  if (foco && document.activeElement === document.body) $(foco)?.focus({ preventScroll: true });
-}
-function lerHash() {
-  const h = decodeURIComponent(location.hash.slice(1));
-  const anterior = estado.modo;
-  if (h === 'telao' || h === 'editar') estado.modo = h;
-  else {
-    estado.modo = 'ver';
-    const i = h.indexOf('-'), l = i < 0 ? h : h.slice(0, i), id = i < 0 ? null : h.slice(i + 1);
-    if (dados.locais[l]) { estado.local = l; estado.sel = dados.locais[l].ambientes.some(a => a.id === id) ? id : null; }
-  }
-  if (estado.modo !== anterior) entrarModo(anterior);
-}
-function entrarModo(anterior) {
-  if (anterior === 'telao' && document.fullscreenElement) document.exitFullscreen?.().catch(() => {});
-  estado.turma = null;
-  if (estado.modo === 'telao') {
-    estado.sel = null; estado.zoom = 0; estado.auto = true; estado.girar = true;
-    const ag = agora(); estado.dia = ag.dia; estado.turno = ag.turno;
-  } else if (anterior === 'telao') estado.turno = 'todos';
-  if (estado.modo === 'editar') {
-    estado.d3 = false; estado.zoom = 0; estado.turno = 'todos'; selecionarAlvo(null);
-    const tk = lerToken();
-    if (tk) shaRemoto(CONFIG.arquivo, tk).then(s => { shaBase = s; }).catch(() => {});
-  }
-  reiniciarGiro();
-  acordar();
-}
-
-/* ---------- Eventos ---------- */
-document.addEventListener('click', e => {
-  const t = e.target;
-  const aba = t.closest('.aba, .tr-locais [data-local]');
-  if (aba) { estado.local = aba.dataset.local; estado.sel = null; selecionarAlvo(estado.modo === 'editar' ? null : estado.alvo); reiniciarGiro(); render(); return; }
-  const dia = t.closest('[data-dia]');
-  if (dia) { estado.dia = dia.dataset.dia; render({ manterInspetor: false }); return; }
-  const tu = t.closest('#turnos [data-turno]');
-  if (tu) { estado.turno = tu.dataset.turno; render(); return; }
-  const tm = t.closest('.turma');
-  if (tm) { estado.turma = estado.turma === tm.dataset.turma ? null : tm.dataset.turma; render(); return; }
-  const ir = t.closest('button[data-ir]');
-  if (ir) { const v = ir.dataset.ir, i = v.indexOf('-'); estado.local = v.slice(0, i); estado.sel = v.slice(i + 1); render(); $(`.amb[data-id="${CSS.escape(estado.sel)}"]`, base)?.focus({ preventScroll: true }); return; }
-  const sel = t.closest('#legenda [data-sel]');
-  if (sel) {
-    if (estado.modo === 'editar') selecionarAlvo({ tipo: 'amb', id: sel.dataset.sel }); else estado.sel = estado.sel === sel.dataset.sel ? null : sel.dataset.sel;
-    render(); return;
-  }
-  const ed = t.closest('[data-ed]');
-  if (ed) { const [lid, id] = ed.dataset.ed.split('|'); estado.local = lid; selecionarAlvo({ tipo: 'amb', id }); render(); $('#painel-planta').scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
-  const rem = t.closest('[data-rem]');
-  if (rem) { const antes = JSON.stringify(dados); delete doQuadro(rem.dataset.rem).aulas; registrar(antes); render(); return; }
-  const ac = t.closest('[data-acao]');
-  if (ac) { acaoInspetor(ac.dataset.acao); return; }
-  const fe = t.closest('[data-ferr]');
-  if (fe) { estado.ferramenta = fe.dataset.ferr; painelEditor(); return; }
-  const ex = t.closest('[data-ext]');
-  if (ex) { estado.paredeExt = +ex.dataset.ext; painelEditor(); return; }
-  switch (t.closest('button')?.id) {
-    case 'b-token': { const v = $('#f-token').value.trim(); if (!v) { msgPub('Cole o token antes de salvar.', true); return; } try { localStorage.setItem('planta-token-github', v); } catch {} shaRemoto(CONFIG.arquivo, v).then(s => { shaBase = s; msgPub('Token salvo e conferido.'); }).catch(err => msgPub(erroGitHub(err), true)); painelEditor(); return; }
-    case 'b-sem-token': try { localStorage.removeItem('planta-token-github'); } catch {} painelEditor(); return;
-    case 'b-publicar': publicar(); return;
-    case 'b-forcar': publicar(true); return;
-    case 'b-baixar': baixar(); return;
-    case 'b-descartar': {
-      const b = $('#b-descartar');
-      if (b.dataset.confirmar) { dados = JSON.parse(publicado); for (const k in fotosNovas) delete fotosNovas[k]; desfazer.length = refazer.length = 0; limparRascunho(); selecionarAlvo(null); delete b.dataset.confirmar; b.textContent = 'Descartar alterações'; msgPub('Alterações descartadas.'); render(); }
-      else { b.dataset.confirmar = '1'; b.textContent = 'Confirmar descarte'; setTimeout(() => { delete b.dataset.confirmar; b.textContent = 'Descartar alterações'; }, 4000); }
-      return;
-    }
-    case 'b-retomar': { const r = lerRascunho(); if (r) { desfazer.push(JSON.stringify(dados)); dados = r.dados; selecionarAlvo(null); render(); } return; }
-    case 'b-descartar-rascunho': limparRascunho(); painelEditor(); return;
-    case 'b-add-sala': adicionar('sala'); return;
-    case 'b-add-zona': adicionar('zona'); return;
-    case 'b-add-texto': adicionar('texto'); return;
-    case 'b-desfazer': voltar(desfazer, refazer); return;
-    case 'b-refazer': voltar(refazer, desfazer); return;
-    case 'b-copiar': {
-      const destino = $('#quadro-destino').value, dias = destino === 'todos' ? Object.keys(DIAS).filter(d => d !== estado.dia) : [destino], antes = JSON.stringify(dados);
-      todos().forEach(({ a }) => { if (!a.aulas) return; dias.forEach(d => { if (a.aulas[estado.dia]) a.aulas[d] = JSON.parse(JSON.stringify(a.aulas[estado.dia])); else delete a.aulas[d]; }); });
-      registrar(antes); render(); dica(`Quadro de ${DIAS[estado.dia].toLowerCase()} copiado.`); return;
-    }
-    case 'b-quadro-add': { const v = $('#quadro-add').value; if (!v) return; const antes = JSON.stringify(dados); doQuadro(v).aulas = {}; registrar(antes); render(); return; }
-    case 'b3d': case 'tc-3d': estado.d3 = !estado.d3; render(); return;
-    case 'zmais': estado.zoom = Math.min(estado.zoom + 1, ZOOMS.length - 1); render(); return;
-    case 'zmenos': estado.zoom = Math.max(estado.zoom - 1, 0); render(); return;
-    case 'zajustar': estado.zoom = 0; render(); vista.scrollTo(0, 0); return;
-    case 'bcroqui': {
-      const L = Lc(), dlg = $('#dlg');
-      $('#dlg-img').src = fotosNovas[estado.local] || `${L.foto}?v=${encodeURIComponent(dados.atualizado)}`;
-      $('#dlg-img').alt = `Foto do croqui original: ${L.nome}`;
-      $('#dlg-titulo').textContent = `Croqui original · ${L.nome}`;
-      dlg.showModal();
-      return;
-    }
-    case 'dlg-fechar': $('#dlg').close(); return;
-    case 'tc-ant': proximoLocal(-1); reiniciarGiro(); return;
-    case 'tc-prox': proximoLocal(1); reiniciarGiro(); return;
-    case 'tc-girar': estado.girar = !estado.girar; reiniciarGiro(); render(); return;
-    case 'tc-cheia': if (document.fullscreenElement) document.exitFullscreen?.(); else document.documentElement.requestFullscreen?.().catch(() => {}); return;
-  }
-  if (estado.modo === 'ver') {
-    const g = t.closest('#base .amb');
-    if (g) { estado.sel = estado.sel === g.dataset.id ? null : g.dataset.id; render(); }
-    else if (t.closest('#base') && estado.sel) { estado.sel = null; render(); }
-  }
-});
-$('#dlg').addEventListener('click', e => { if (e.target.id === 'dlg') e.target.close(); });
-base.addEventListener('keydown', e => {
-  const g = e.target.closest('.amb');
-  if (estado.modo === 'ver' && g && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); estado.sel = estado.sel === g.dataset.id ? null : g.dataset.id; render(); }
-  if (estado.modo === 'editar' && g && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); selecionarAlvo({ tipo: 'amb', id: g.dataset.id }); render(); }
-});
-$('#abas').addEventListener('keydown', e => {
-  const abas = $$('.aba'), i = abas.indexOf(document.activeElement);
-  const j = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: abas.length - 1 }[e.key];
-  if (i < 0 || j === undefined) return;
-  e.preventDefault();
-  estado.local = abas[(j + abas.length) % abas.length].dataset.local;
-  estado.sel = null;
-  render();
-  $(`.aba[data-local="${estado.local}"]`).focus();
-});
-
-// Formulários do editor: atualiza ao digitar; registra no desfazer ao confirmar o campo.
-document.addEventListener('focusin', e => { if (e.target.dataset?.c !== undefined || e.target.dataset?.q !== undefined) antesCampo = JSON.stringify(dados); });
-document.addEventListener('input', e => {
-  const el = e.target;
-  if (el.dataset.c !== undefined) { aplicarCampo(el); desenhar(); legenda(); painelEditor(); quadro(); salvarRascunho(); }
-  else if (el.dataset.q !== undefined) {
-    const [lid, id, k] = el.dataset.q.split('|');
-    setAulas(doQuadro(`${lid}|${id}`), estado.dia, k, el.value);
-    if (lid === estado.local) desenhar();
-    painelEditor(); salvarRascunho();
-  }
-});
-document.addEventListener('change', e => {
-  const el = e.target;
-  if (el.id === 'f-foto' && el.files?.[0]) { trocarFoto(el.files[0]); return; }
-  if (el.id === 'tc-turno') { estado.auto = el.value === 'auto'; if (estado.auto) { const ag = agora(); estado.dia = ag.dia; estado.turno = ag.turno; } else estado.turno = el.value; render(); return; }
-  if (el.id === 'tc-dia') { estado.dia = el.value; render(); return; }
-  if ((el.dataset.c !== undefined || el.dataset.q !== undefined) && antesCampo && JSON.stringify(dados) !== antesCampo) {
-    registrar(antesCampo);
-    antesCampo = JSON.stringify(dados);
-    if (REDESENHA_FORM.has(el.dataset.c)) render(); else painelEditor();
-  }
-});
-
-document.addEventListener('keydown', e => {
-  const digitando = /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName);
-  if (estado.modo === 'editar' && !digitando) {
-    const mod = e.ctrlKey || e.metaKey;
-    if (mod && e.key.toLowerCase() === 'z') { e.preventDefault(); e.shiftKey ? voltar(refazer, desfazer) : voltar(desfazer, refazer); return; }
-    if (mod && e.key.toLowerCase() === 'y') { e.preventDefault(); voltar(refazer, desfazer); return; }
-    const al = estado.alvo;
-    if (al && (e.key === 'Delete' || e.key === 'Backspace')) { e.preventDefault(); acaoInspetor('excluir'); return; }
-    const passo = e.shiftKey ? 1 : 5, d = { ArrowLeft: [-passo, 0], ArrowRight: [passo, 0], ArrowUp: [0, -passo], ArrowDown: [0, passo] }[e.key];
-    if (al && d) {
-      e.preventDefault();
-      const antes = JSON.stringify(dados), L = Lc();
-      if (al.tipo === 'amb') { const a = ambSel(); a.x += d[0]; a.y += d[1]; }
-      if (al.tipo === 'parede') { const p = L.paredes[al.i]; p[0] += d[0]; p[2] += d[0]; p[1] += d[1]; p[3] += d[1]; }
-      if (al.tipo === 'porta') { const p = L.portas[al.i]; if (p.o === 'h') p.x += d[0]; else p.y += d[1]; }
-      if (al.tipo === 'marca') { const m = L.marcas[al.i]; m.x += d[0]; m.y += d[1]; m.seta = m.seta.map((v, i) => v + d[i % 2]); }
-      if (al.tipo === 'texto') { const t = L.textos[al.i]; t.x += d[0]; t.y += d[1]; }
-      registrar(antes);
-      render();
-      return;
-    }
-    if (e.key === 'Escape') { selecionarAlvo(null); render(); return; }
-  }
-  if (estado.modo === 'telao') {
-    acordar();
-    if (e.key === 'ArrowRight') { proximoLocal(1); reiniciarGiro(); }
-    if (e.key === 'ArrowLeft') { proximoLocal(-1); reiniciarGiro(); }
-    if (e.key === ' ' && !digitando) { e.preventDefault(); estado.girar = !estado.girar; reiniciarGiro(); render(); }
-    if (e.key.toLowerCase() === 'f' && !digitando) { if (document.fullscreenElement) document.exitFullscreen?.(); else document.documentElement.requestFullscreen?.().catch(() => {}); }
-    if (e.key === 'Escape' && !document.fullscreenElement) location.hash = estado.local;
-    return;
-  }
-  if (estado.modo === 'ver' && e.key === 'Escape' && !$('#dlg').open && (estado.sel || estado.turma)) { estado.sel = null; estado.turma = null; render(); }
-});
-document.addEventListener('pointermove', () => { if (estado.modo === 'telao') acordar(); });
-document.addEventListener('fullscreenchange', () => { if (estado.modo === 'telao') telao(); });
-window.addEventListener('hashchange', () => { lerHash(); render(); });
-
-// Relógio do telão e recarga periódica dos dados publicados (sem recarregar a página).
-setInterval(() => {
-  if (estado.modo !== 'telao') return;
-  if (estado.auto) {
-    const ag = agora();
-    if (ag.dia !== estado.dia || ag.turno !== estado.turno) { estado.dia = ag.dia; estado.turno = ag.turno; render(); return; }
-  }
-  relogio();
-}, 15000);
-setInterval(async () => {
-  if (estado.modo === 'editar' || location.protocol === 'file:') return;
-  try {
-    const txt = await (await fetch(`${CONFIG.arquivo}?t=${Date.now()}`, { cache: 'no-store' })).text();
-    const novo = JSON.parse(txt.slice(txt.indexOf('{'), txt.lastIndexOf('}') + 1));
-    if (JSON.stringify(novo) !== JSON.stringify(dados)) { dados = novo; publicado = JSON.stringify(novo); if (!dados.locais[estado.local]) estado.local = Object.keys(dados.locais)[0]; render(); }
-  } catch {}
-}, RECARGA_MS);
-
-if (!dados) {
-  document.body.innerHTML = '<p style="padding:32px;font:16px system-ui">Não foi possível carregar <code>dados.js</code>. Confira se o arquivo está na mesma pasta do <code>index.html</code>.</p>';
-} else {
-  lerHash();
-  render();
-  document.fonts?.ready.then(() => $$('.selo', base).forEach(medir));
-}
-</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="js/config.js"></script>
+<script src="js/base.js"></script>
+<script src="js/planilha.js"></script>
+<script src="js/paineis.js"></script>
+<script src="js/editor.js"></script>
+<script src="js/desenho.js"></script>
+<script src="js/banco.js"></script>
+<script src="js/eventos.js"></script>
 </body>
 </html>
