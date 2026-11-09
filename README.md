@@ -21,7 +21,7 @@ No link público, Espelhar e Girar mudam a planta só para quem está vendo, sem
 
 ## Funcionalidades
 
-- **Planta**: três áreas — 1º Andar (todas as salas), 2º Andar (Maker) e Carretas. Clique num espaço para ver os detalhes e as aulas do dia. Há modo 3D, zoom e a foto do croqui original.
+- **Planta**: três áreas — 1º Andar (todas as salas), 2º Andar (Maker) e Unidades Móveis (carretas). No Multiuso Livre, o aviso **VOCÊ ESTÁ AQUI**, com um ponto pulsando, ajuda os alunos a se localizarem; ele é uma indicação de acesso da planta (`aqui: true`) e pode ser movido no editor. Clique num espaço para ver os detalhes e as aulas do dia. Há modo 3D, zoom e a foto do croqui original.
 - **Aulas da planilha**: a planta, a tabela "Aulas" do dia, o calendário e o telão mostram turma, módulo e docente de cada ambiente, lidos da planilha oficial (veja abaixo).
 - **Calendário de enturmação**: mostra 1 semana, 15 dias ou 30 dias, em grade (ambiente × dia) ou em lista, com busca por turma, módulo, professor(a) ou ambiente. As aulas da planilha se repetem toda semana. O "!" marca duas aulas no mesmo ambiente e turno.
 - **Renomear espaços**: pela lista "Espaços" do editor, com dois cliques no espaço ou com F2. O texto da planta acompanha o novo nome. O nome da área se troca no campo da lista ou com dois cliques na aba.
@@ -53,18 +53,20 @@ As abas por turma (**Matutino** e **Vespertino**) repetem a mesma informação e
 - Linhas que o site não entender aparecem contadas no rodapé; passe o mouse para ver quais.
 - Se uma aba for apagada e recriada, o número dela (gid) muda. Nesse caso o rodapé avisa ("não foi possível ler a planilha") e o gid precisa ser atualizado em `PLANILHA_ABAS`, em `js/planilha.js`. O gid é o número que aparece no fim do endereço com a aba aberta (`…#gid=54130094`).
 
-**Nomes dos ambientes.** Um ambiente com o mesmo nome de um espaço da planta se liga sozinho a ele (sem diferença de acentos e maiúsculas). Os outros nomes se ligam pela lista `PLANILHA_APELIDOS`, em `js/planilha.js`:
+**Nomes dos ambientes.** A planta usa os mesmos nomes da planilha, para todo mundo falar a mesma língua:
 
-| Na planilha | Na planta |
+| Na planilha e na planta | Antes, no croqui |
 |---|---|
-| Lab. Info. complexo | Laboratório de Informática (1º Andar) |
-| Cozinha complexo | Cozinha (1º Andar) |
-| Sala óculos | Sala 3D (1º Andar) |
-| Maker | Maker (2º Andar) |
-| UM Civil, UM Elétrica, UM Automação | Carreta Civil, Carreta Elétrica, Carreta Automação |
-| UM Manutenção | Carreta Mecânica |
+| Auditório 1, Auditório 2 | Multiuso 01, Multiuso 02 |
+| Lab. Info. Complexo | Laboratório de Informática |
+| Cozinha Complexo | Cozinha |
+| Sala Óculos | Sala 3D |
+| Maker | Maker |
+| UM Civil, UM Elétrica, UM Automação, UM Manutenção (área **Unidades Móveis**) | Carretas Civil, Elétrica, Automação e Mecânica |
 
-Ambiente da planilha que não está desenhado na planta (hoje, **Auditório 1** e **Auditório 2**) aparece no grupo **Outros ambientes**: na tabela de aulas, no calendário e no telão. A ligação acompanha a planta na hora: renomear, excluir ou criar um espaço muda para onde as aulas vão, sem esperar a próxima leitura.
+O nome se liga sem diferença de acentos e maiúsculas. Para não depender só do nome, `PLANILHA_APELIDOS` (`js/planilha.js`) também liga esses ambientes pelo id do espaço; use essa lista quando a planilha passar a escrever um nome de outro jeito.
+
+Ambiente da planilha que não está desenhado na planta aparece no grupo **Outros ambientes**: na tabela de aulas, no calendário e no telão. A ligação acompanha a planta na hora: renomear, excluir ou criar um espaço muda para onde as aulas vão, sem esperar a próxima leitura.
 
 **"Livre"** só aparece nos espaços e horários que a planilha lista sem aula. Um espaço que não está na planilha fica sem selo e fora da tabela de aulas, porque o site não sabe se ele está ocupado.
 

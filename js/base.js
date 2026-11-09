@@ -7,7 +7,7 @@ const sb = window.supabase && SUPABASE_URL && SUPABASE_CHAVE ? window.supabase.c
 const $ = (s, el = document) => el.querySelector(s);
 const $$ = (s, el = document) => [...el.querySelectorAll(s)];
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-const CAT = { ensino: 'Salas multiuso', lab: 'Laboratórios', admin: 'Administrativo', conv: 'Convivência', serv: 'Serviços', circ: 'Circulação' };
+const CAT = { ensino: 'Auditórios e salas', lab: 'Laboratórios', admin: 'Administrativo', conv: 'Convivência', serv: 'Serviços', circ: 'Circulação' };
 const CORES = { ensino: '#164193', lab: '#008AD1', admin: '#F08A00', conv: '#52AE32', serv: '#009E96', circ: '#7A869E' };
 const POSTIT = { rosa: '#FF5C93', amarelo: '#FFE433', limao: '#CDEB3B', laranja: '#FFA928' };
 const POSTIT_NOME = { rosa: 'Rosa', amarelo: 'Amarelo', limao: 'Verde-limão', laranja: 'Laranja' };
@@ -160,7 +160,7 @@ function limites(L, q = false) {
   L.ambientes.forEach(a => inc(a.x, a.y, a.x + a.w, a.y + a.h));
   L.paredes.forEach(([a, b, c, d]) => inc(a, b, c, d));
   L.marcas.forEach(m => {
-    const w = m.t.length * 9.5 + 8; // girada, a âncora é recalculada: reserva o texto dos dois lados
+    const w = m.t.length * (m.aqui ? 10.5 : 9.5) + 8; // girada, a âncora é recalculada: reserva o texto dos dois lados
     if (q) inc(m.x - 12, m.y - w, m.x + 12, m.y + w);
     else inc(m.ancora === 'end' ? m.x - w : m.x - w / 2, m.y - 10, m.ancora === 'end' ? m.x : m.x + w / 2, m.y + 10);
     inc(...m.seta);
@@ -312,7 +312,10 @@ function desenhar() {
       const [a, b, c, d] = qv.lin, dx = a * sx + c * sy, dy = b * sx + d * sy;
       anc = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'end' : 'start') : 'middle';
     }
-    return `<g class="acesso" data-m="${i}"><path d="M${m.seta[0]} ${m.seta[1]}L${m.seta[2]} ${m.seta[3]}" marker-end="url(#seta)"/><text x="${m.x}" y="${m.y}" text-anchor="${anc}" dominant-baseline="central"${attrT(contra(m.x, m.y))}>${esc(m.t)}</text></g>`;
+    // "Você está aqui" (aqui: true): texto maior e um ponto pulsando logo depois da ponta da seta
+    const [ax, ay, bx, by] = m.seta, n = Math.hypot(bx - ax, by - ay) || 1, px = Math.round((bx + 10 * (bx - ax) / n) * 10) / 10, py = Math.round((by + 10 * (by - ay) / n) * 10) / 10;
+    const ponto = m.aqui ? `<circle class="aqui-onda" cx="${px}" cy="${py}" r="8"/><circle class="aqui-ponto" cx="${px}" cy="${py}" r="6"/>` : '';
+    return `<g class="acesso${m.aqui ? ' aqui' : ''}" data-m="${i}">${ponto}<path d="M${m.seta[0]} ${m.seta[1]}L${m.seta[2]} ${m.seta[3]}" marker-end="url(#seta)"/><text x="${m.x}" y="${m.y}" text-anchor="${anc}" dominant-baseline="central"${attrT(contra(m.x, m.y))}>${esc(m.t)}</text></g>`;
   }).join('');
   base.setAttribute('viewBox', vb.join(' '));
   base.setAttribute('aria-label', `Planta: ${L.nome}`);

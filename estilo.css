@@ -137,6 +137,11 @@ h1 .ponto{color:var(--verde)}
 .acesso{pointer-events:none}
 .acesso path{fill:none;stroke:var(--laranja);stroke-width:2.5}
 .acesso text{font-size:12.5px;font-weight:700;letter-spacing:.14em;fill:var(--laranja-txt)}
+.acesso.aqui text{font-size:14px;font-weight:800;paint-order:stroke;stroke:#fff;stroke-width:4px;stroke-linejoin:round}
+.aqui-ponto{fill:var(--laranja);stroke:#fff;stroke-width:2}
+.aqui-onda{fill:none;stroke:var(--laranja);stroke-width:2;transform-box:fill-box;transform-origin:center;animation:aqui 1.8s ease-out infinite}
+@keyframes aqui{from{transform:scale(.8);opacity:.9}to{transform:scale(2.6);opacity:0}}
+@media (prefers-reduced-motion:reduce){.aqui-onda{animation:none;opacity:.4}}
 
 /* Edição na planta: área de desenho com câmera própria (zoom e pan), barra flutuante e alças (js/desenho.js) */
 .modo-editar #base{touch-action:none}

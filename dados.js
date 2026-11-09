@@ -336,6 +336,18 @@ window.DADOS = {
       424
      ],
      "ancora": "end"
+    },
+    {
+     "t": "VOCÊ ESTÁ AQUI",
+     "x": 906,
+     "y": 666,
+     "seta": [
+      907,
+      654,
+      921,
+      590
+     ],
+     "aqui": true
     }
    ],
    "textos": [
@@ -385,7 +397,7 @@ window.DADOS = {
      "h": 50,
      "croqui": "(espaço entre as salas multiuso)",
      "moveis": "—",
-     "acesso": "Liga o hall às salas Multiuso 01 e 02",
+     "acesso": "Liga o hall aos Auditórios 1 e 2",
      "ly": 27
     },
     {
@@ -414,7 +426,7 @@ window.DADOS = {
      "desenho": "<path class=\"m\" d=\"M760 352H806V404H760V392H794V364H760Z\"/><text class=\"txt-m\" x=\"783\" y=\"344\">Sofá</text><rect class=\"m\" x=\"764\" y=\"424\" width=\"36\" height=\"34\" rx=\"4\"/><text class=\"txt-m\" x=\"782\" y=\"444\">Mesa</text>",
      "croqui": "sofá / Mesa",
      "moveis": "Sofá e mesa junto à parede do bloco administrativo",
-     "acesso": "Liga a sala 3D, a cozinha, o bloco administrativo e a área de mesas",
+     "acesso": "Liga a Sala Óculos, a Cozinha Complexo, o bloco administrativo e a área de mesas",
      "ly": 48,
      "ref": [
       672,
@@ -423,7 +435,7 @@ window.DADOS = {
     },
     {
      "id": "mu02",
-     "nome": "Multiuso 02",
+     "nome": "Auditório 2",
      "cat": "ensino",
      "tipo": "sala",
      "x": 0,
@@ -433,7 +445,7 @@ window.DADOS = {
      "tam": 17,
      "croqui": "Multi Uso 2 / Multi Uso 02",
      "moveis": "Layout interno não detalhado no croqui",
-     "acesso": "Pela circulação entre as salas multiuso (porta estimada)",
+     "acesso": "Pela circulação entre os auditórios (porta estimada)",
      "postit": {
       "cor": "rosa",
       "texto": "seg. 801 M / 801 vesp"
@@ -452,7 +464,7 @@ window.DADOS = {
     },
     {
      "id": "mu01",
-     "nome": "Multiuso 01",
+     "nome": "Auditório 1",
      "cat": "ensino",
      "tipo": "sala",
      "x": 0,
@@ -462,7 +474,7 @@ window.DADOS = {
      "tam": 17,
      "croqui": "Multi uso 01 / Multi Uso 01",
      "moveis": "Layout interno não detalhado no croqui",
-     "acesso": "Pela circulação entre as salas multiuso (porta estimada)",
+     "acesso": "Pela circulação entre os auditórios (porta estimada)",
      "postit": {
       "cor": "amarelo",
       "texto": "seg. 701 M / 901 vesp"
@@ -547,7 +559,7 @@ window.DADOS = {
     },
     {
      "id": "sala3d",
-     "nome": "Sala 3D",
+     "nome": "Sala Óculos",
      "sub": "Óculos 3D",
      "cat": "lab",
      "tipo": "sala",
@@ -574,11 +586,7 @@ window.DADOS = {
     },
     {
      "id": "labinfo",
-     "nome": "Laboratório de Informática",
-     "rot": [
-      "Laboratório de",
-      "Informática"
-     ],
+     "nome": "Lab. Info. Complexo",
      "cat": "lab",
      "tipo": "sala",
      "x": 812,
@@ -769,7 +777,7 @@ window.DADOS = {
     },
     {
      "id": "cozinha",
-     "nome": "Cozinha",
+     "nome": "Cozinha Complexo",
      "cat": "serv",
      "tipo": "sala",
      "x": 674,
@@ -808,10 +816,7 @@ window.DADOS = {
     },
     {
      "id": "refeitorio2",
-     "nome": "Refeitório (junto à Multiuso 01)",
-     "rot": [
-      "Refeitório"
-     ],
+     "nome": "Refeitório (junto ao Auditório 1)",
      "cat": "conv",
      "tipo": "zona",
      "x": 300,
@@ -829,6 +834,9 @@ window.DADOS = {
      "ref": [
       300,
       206
+     ],
+     "rot": [
+      "Refeitório"
      ]
     }
    ]
@@ -916,10 +924,10 @@ window.DADOS = {
    ]
   },
   "carretas": {
-   "nome": "Carretas",
-   "aba": "4 laboratórios móveis",
-   "titulo": "Carretas · laboratórios móveis",
-   "sub": "Disposição das carretas conforme o croqui · sem escala",
+   "nome": "Unidades Móveis",
+   "aba": "4 carretas",
+   "titulo": "Unidades Móveis · carretas",
+   "sub": "Disposição das unidades móveis (carretas) conforme o croqui · sem escala",
    "icone": "i-carreta",
    "foto": "assets/croqui/carretas.jpg",
    "patio": [
@@ -941,10 +949,7 @@ window.DADOS = {
    "ambientes": [
     {
      "id": "civil",
-     "nome": "Carreta Civil",
-     "rot": [
-      "Civil"
-     ],
+     "nome": "UM Civil",
      "sub": "Carreta",
      "cat": "lab",
      "tipo": "veiculo",
@@ -973,10 +978,7 @@ window.DADOS = {
     },
     {
      "id": "eletrica",
-     "nome": "Carreta Elétrica",
-     "rot": [
-      "Elétrica"
-     ],
+     "nome": "UM Elétrica",
      "sub": "Carreta",
      "cat": "lab",
      "tipo": "veiculo",
@@ -1005,10 +1007,7 @@ window.DADOS = {
     },
     {
      "id": "automacao",
-     "nome": "Carreta Automação",
-     "rot": [
-      "Automação"
-     ],
+     "nome": "UM Automação",
      "sub": "Carreta",
      "cat": "lab",
      "tipo": "veiculo",
@@ -1042,10 +1041,7 @@ window.DADOS = {
     },
     {
      "id": "mec",
-     "nome": "Carreta Mecânica",
-     "rot": [
-      "Mecânica"
-     ],
+     "nome": "UM Manutenção",
      "sub": "Carreta",
      "cat": "lab",
      "tipo": "veiculo",

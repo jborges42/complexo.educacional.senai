@@ -15,6 +15,7 @@ const PLANILHA_ABAS = [
 // Nome do ambiente na planilha (sem acento, maiúsculas nem pontuação) → espaço da planta (área/id).
 // Nomes iguais aos da planta se ligam sozinhos. Os que não se ligam a nenhum espaço aparecem em "Outros ambientes".
 const PLANILHA_APELIDOS = {
+  'auditorio 1': 'andar1/mu01', 'auditorio 2': 'andar1/mu02',
   'lab info complexo': 'andar1/labinfo', 'lab inf complexo': 'andar1/labinfo',
   'cozinha complexo': 'andar1/cozinha', 'sala oculos': 'andar1/sala3d', 'maker': 'andar2/maker',
   'um civil': 'carretas/civil', 'um eletrica': 'carretas/eletrica', 'um automacao': 'carretas/automacao', 'um manutencao': 'carretas/mec',
